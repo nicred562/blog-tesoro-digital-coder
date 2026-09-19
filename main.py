@@ -86,7 +86,7 @@ def ejecutar_opcion(opcion, blog):
 
 
 def main():
-    print("Bienvenido al blog por consola.")
+    print("Bienvenido al blog de Tesoro Digital.")
     blog = Blog(cargar_posts())
 
     continuar = True

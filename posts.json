@@ -1,109 +1,79 @@
 [
   {
-    "titulo": "Como armar un servidor de FiveM con QBCore",
-    "contenido": "En este post repasamos los primeros pasos para levantar un servidor de FiveM usando el framework QBCore, desde la instalacion hasta la configuracion basica de recursos.",
+    "titulo": "Como abrir tu cuenta en Tesoro Digital en 5 minutos",
+    "contenido": "Repasamos el paso a paso para abrir una cuenta desde la app de Tesoro Digital: validacion de identidad, alta de usuario y primer ingreso.",
     "autor": {
       "nombre": "Nicolas Sosa",
       "usuario": "nikito",
-      "email": "nikito@blogconsola.com",
+      "email": "nikito@tesorodigital.com",
       "bio": ""
     },
     "tags": [
-      "fivem",
+      "cuentas",
       "tutorial",
-      "programacion"
+      "app"
     ],
     "estado": "publicado"
   },
   {
-    "titulo": "Python para principiantes: variables y tipos de datos",
-    "contenido": "Una introduccion pensada para quienes recien arrancan a programar en Python: variables, tipos de datos y buenas practicas basicas.",
+    "titulo": "Ahorro para principiantes: como armar tu fondo de emergencia",
+    "contenido": "Una introduccion para quienes recien empiezan a ahorrar: cuanto guardar, donde tenerlo y como automatizarlo desde la app.",
     "autor": {
       "nombre": "Ana Lopez",
       "usuario": "analopez",
-      "email": "ana@blogconsola.com",
+      "email": "ana@tesorodigital.com",
       "bio": ""
     },
     "tags": [
-      "python",
+      "ahorro",
+      "finanzas personales",
       "tutorial"
     ],
     "estado": "publicado"
   },
   {
-    "titulo": "Novedades del ultimo update de FiveM",
-    "contenido": "Repasamos las novedades y cambios mas importantes de la ultima actualizacion de la plataforma FiveM.",
+    "titulo": "Novedades: transferencias instantaneas las 24 horas",
+    "contenido": "Repasamos los cambios mas importantes de la ultima actualizacion de Tesoro Digital: transferencias inmediatas, limites y comisiones.",
     "autor": {
       "nombre": "Nicolas Sosa",
       "usuario": "nikito",
-      "email": "nikito@blogconsola.com",
+      "email": "nikito@tesorodigital.com",
       "bio": ""
     },
     "tags": [
-      "fivem",
+      "transferencias",
       "noticias"
     ],
     "estado": "borrador"
   },
   {
-    "titulo": "Optimizando scripts en Lua para servidores de rol",
-    "contenido": "Algunos tips practicos para mejorar el rendimiento de scripts Lua en servidores de roleplay con mucho trafico.",
+    "titulo": "Seguridad: como proteger tu cuenta de fraudes y phishing",
+    "contenido": "Algunos consejos practicos para reconocer mensajes falsos, cuidar tus claves y activar la verificacion en dos pasos.",
     "autor": {
       "nombre": "Carlos Fernandez",
       "usuario": "cfernandez",
-      "email": "carlos@blogconsola.com",
+      "email": "carlos@tesorodigital.com",
       "bio": ""
     },
     "tags": [
-      "programacion",
-      "fivem"
+      "seguridad",
+      "app"
     ],
     "estado": "publicado"
   },
   {
-    "titulo": "Setup gamer 2026: que hardware conviene hoy",
-    "contenido": "Una guia rapida sobre que componentes tener en cuenta a la hora de armar o actualizar un setup gamer este anio.",
+    "titulo": "Tarjetas 2026: que debes saber antes de elegir una",
+    "contenido": "Una guia rapida sobre tarjetas de debito, credito y prepagas: costos, beneficios y limites a tener en cuenta este anio.",
     "autor": {
       "nombre": "Ana Lopez",
       "usuario": "analopez",
-      "email": "ana@blogconsola.com",
+      "email": "ana@tesorodigital.com",
       "bio": ""
     },
     "tags": [
-      "gaming"
+      "tarjetas",
+      "finanzas personales"
     ],
     "estado": "archivado"
-  },
-  {
-    "titulo": "Mi post de prueba",
-    "contenido": "Contenido de prueba",
-    "autor": {
-      "nombre": "Nico",
-      "usuario": "",
-      "email": "",
-      "bio": "Bio corta"
-    },
-    "tags": [
-      "python",
-      "test"
-    ],
-    "estado": "publicado"
-  },
-  {
-    "titulo": "coderhouse",
-    "contenido": "tu diseño ideal para emprender",
-    "autor": {
-      "nombre": "nicooo",
-      "usuario": "",
-      "email": "",
-      "bio": "emprendedor senior"
-    },
-    "tags": [
-      "emprender",
-      "comprender",
-      "crecer",
-      "superarse."
-    ],
-    "estado": "publicado"
   }
 ]

@@ -16,7 +16,7 @@ RUTA_JSON = os.path.join(
 estados_post = ["publicado", "borrador", "archivado"]
 
 # Tags disponibles en el blog (solo de referencia)
-etiquetas_blog = {"python", "fivem", "gaming", "tutorial", "noticias", "programacion"}
+etiquetas_blog = {"cuentas", "ahorro", "tarjetas", "transferencias", "seguridad", "app", "tutorial", "noticias"}
 
 
 def cargar_posts(ruta=RUTA_JSON):

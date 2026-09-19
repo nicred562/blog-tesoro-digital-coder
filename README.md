@@ -1,6 +1,6 @@
-# Blog Django
+# Blog Django - Tesoro Digital
 
-Proyecto base de un blog web desarrollado con Django. Este repositorio también conserva el blog por consola que se construyó en los módulos anteriores (ver más abajo).
+Proyecto base del blog web de **Tesoro Digital**, un banco digital. El blog va a publicar contenido para clientes: guías de uso de la app, ahorro, tarjetas, transferencias, seguridad y novedades. Este repositorio también conserva el blog por consola que se construyó en los módulos anteriores (ver más abajo).
 
 ## Descripción
 
@@ -69,9 +69,9 @@ blog_consola/
 
 ---
 
-# Blog por Consola
+# Blog por Consola (Tesoro Digital)
 
-Blog por consola en Python, organizado en módulos y con las entidades modeladas como clases (POO). Permite ver posts, buscar por título, filtrar por tag, crear posts nuevos, validarlos y guardarlos en un archivo JSON para que persistan entre ejecuciones.
+Blog por consola de Tesoro Digital en Python, organizado en módulos y con las entidades modeladas como clases (POO). Permite ver posts, buscar por título, filtrar por tag, crear posts nuevos, validarlos y guardarlos en un archivo JSON para que persistan entre ejecuciones.
 
 ## Cómo correrlo
 
