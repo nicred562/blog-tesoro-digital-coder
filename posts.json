@@ -1,0 +1,109 @@
+[
+  {
+    "titulo": "Como armar un servidor de FiveM con QBCore",
+    "contenido": "En este post repasamos los primeros pasos para levantar un servidor de FiveM usando el framework QBCore, desde la instalacion hasta la configuracion basica de recursos.",
+    "autor": {
+      "nombre": "Nicolas Sosa",
+      "usuario": "nikito",
+      "email": "nikito@blogconsola.com",
+      "bio": ""
+    },
+    "tags": [
+      "fivem",
+      "tutorial",
+      "programacion"
+    ],
+    "estado": "publicado"
+  },
+  {
+    "titulo": "Python para principiantes: variables y tipos de datos",
+    "contenido": "Una introduccion pensada para quienes recien arrancan a programar en Python: variables, tipos de datos y buenas practicas basicas.",
+    "autor": {
+      "nombre": "Ana Lopez",
+      "usuario": "analopez",
+      "email": "ana@blogconsola.com",
+      "bio": ""
+    },
+    "tags": [
+      "python",
+      "tutorial"
+    ],
+    "estado": "publicado"
+  },
+  {
+    "titulo": "Novedades del ultimo update de FiveM",
+    "contenido": "Repasamos las novedades y cambios mas importantes de la ultima actualizacion de la plataforma FiveM.",
+    "autor": {
+      "nombre": "Nicolas Sosa",
+      "usuario": "nikito",
+      "email": "nikito@blogconsola.com",
+      "bio": ""
+    },
+    "tags": [
+      "fivem",
+      "noticias"
+    ],
+    "estado": "borrador"
+  },
+  {
+    "titulo": "Optimizando scripts en Lua para servidores de rol",
+    "contenido": "Algunos tips practicos para mejorar el rendimiento de scripts Lua en servidores de roleplay con mucho trafico.",
+    "autor": {
+      "nombre": "Carlos Fernandez",
+      "usuario": "cfernandez",
+      "email": "carlos@blogconsola.com",
+      "bio": ""
+    },
+    "tags": [
+      "programacion",
+      "fivem"
+    ],
+    "estado": "publicado"
+  },
+  {
+    "titulo": "Setup gamer 2026: que hardware conviene hoy",
+    "contenido": "Una guia rapida sobre que componentes tener en cuenta a la hora de armar o actualizar un setup gamer este anio.",
+    "autor": {
+      "nombre": "Ana Lopez",
+      "usuario": "analopez",
+      "email": "ana@blogconsola.com",
+      "bio": ""
+    },
+    "tags": [
+      "gaming"
+    ],
+    "estado": "archivado"
+  },
+  {
+    "titulo": "Mi post de prueba",
+    "contenido": "Contenido de prueba",
+    "autor": {
+      "nombre": "Nico",
+      "usuario": "",
+      "email": "",
+      "bio": "Bio corta"
+    },
+    "tags": [
+      "python",
+      "test"
+    ],
+    "estado": "publicado"
+  },
+  {
+    "titulo": "coderhouse",
+    "contenido": "tu diseño ideal para emprender",
+    "autor": {
+      "nombre": "nicooo",
+      "usuario": "",
+      "email": "",
+      "bio": "emprendedor senior"
+    },
+    "tags": [
+      "emprender",
+      "comprender",
+      "crecer",
+      "superarse."
+    ],
+    "estado": "publicado"
+  }
+]
