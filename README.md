@@ -11,13 +11,13 @@ Contiene la estructura inicial de un proyecto Django (`blog_project`) y una apli
 Clonar el repositorio:
 
 ```bash
-git clone URL_DEL_REPOSITORIO
+git clone https://github.com/nicred562/blog-tesoro-digital-coder.git
 ```
 
 Entrar a la carpeta del proyecto:
 
 ```bash
-cd NOMBRE_DEL_REPOSITORIO
+cd blog-tesoro-digital-coder
 ```
 
 Crear el entorno virtual:
