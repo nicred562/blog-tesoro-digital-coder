@@ -4,7 +4,7 @@ Proyecto base del blog web de **Tesoro Digital**, un banco digital. El blog va a
 
 ## Descripción
 
-Contiene la estructura inicial de un proyecto Django (`blog_project`) y una aplicación llamada `posts`, con idioma `es-ar` y zona horaria `America/Argentina/Buenos_Aires`. Todavía no tiene modelos, vistas ni templates.
+Contiene la estructura inicial de un proyecto Django (`blog_project`) y una aplicación llamada `posts`, con idioma `es-ar` y zona horaria `America/Argentina/Buenos_Aires`. Ya tiene una primera versión navegable, con templates HTML y estilos propios. Todavía no tiene modelos ni base de datos.
 
 ## Instalación
 
@@ -50,11 +50,14 @@ Levantar el servidor de desarrollo:
 python manage.py runserver
 ```
 
-Abrir en el navegador: http://127.0.0.1:8000/
+Abrir en el navegador:
+
+- http://127.0.0.1:8000/ → página de inicio
+- http://127.0.0.1:8000/acerca/ → página "Acerca de"
 
 ## Aplicaciones
 
-- `posts`: aplicación inicial para manejar las publicaciones del blog.
+- `posts`: aplicación del blog. Todavía no tiene modelos ni base de datos, pero ya define las rutas, vistas y templates de las páginas de Inicio y Acerca de.
 
 ## Estructura del proyecto Django
 
@@ -63,9 +66,17 @@ blog_consola/
 ├── manage.py
 ├── requirements.txt
 ├── .gitignore
-├── blog_project/     (configuración del proyecto Django)
-└── posts/            (app del blog)
+├── blog_project/          (configuración del proyecto Django)
+└── posts/                 (app del blog)
+    ├── urls.py            (rutas de la app: inicio y acerca)
+    ├── views.py           (funciones inicio y acerca, con render())
+    ├── templates/posts/   (base.html, inicio.html, acerca.html)
+    └── static/posts/css/  (estilos.css)
 ```
+
+## Páginas y navegación
+
+El sitio tiene un template base (`base.html`) con el menú de navegación, del que heredan `inicio.html` y `acerca.html` usando `{% extends %}`. Desde el menú se puede ir de una página a la otra.
 
 ---
 

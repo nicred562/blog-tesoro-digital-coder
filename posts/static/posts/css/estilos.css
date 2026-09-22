@@ -1,0 +1,79 @@
+:root {
+    --color-primario: #0a3d62;
+    --color-acento: #1abc9c;
+    --color-fondo: #f4f6f8;
+    --color-texto: #22313f;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    line-height: 1.5;
+}
+
+.cabecera {
+    background-color: var(--color-primario);
+    color: #fff;
+}
+
+.cabecera-contenido {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 500;
+}
+
+.menu a:hover {
+    color: var(--color-acento);
+}
+
+.contenido {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.bienvenida h1,
+.acerca h1 {
+    color: var(--color-primario);
+    margin-bottom: 0.5rem;
+}
+
+.mensaje-bienvenida {
+    font-size: 1.1rem;
+}
+
+section {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pie {
+    text-align: center;
+    padding: 1rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}

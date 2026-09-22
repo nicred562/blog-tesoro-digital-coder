@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Tesoro Digital{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'posts/css/estilos.css' %}">
+</head>
+<body>
+    <header class="cabecera">
+        <div class="cabecera-contenido">
+            <span class="logo">Tesoro Digital</span>
+            <nav class="menu">
+                <a href="{% url 'inicio' %}">Inicio</a>
+                <a href="{% url 'acerca' %}">Acerca de</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenido">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="pie">
+        <p>&copy; 2026 Tesoro Digital. Blog interno para clientes.</p>
+    </footer>
+</body>
+</html>
