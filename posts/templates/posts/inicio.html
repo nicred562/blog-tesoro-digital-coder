@@ -9,10 +9,25 @@
         Bienvenido al blog de Tesoro Digital, tu banco digital. Acá vas a encontrar
         guías, novedades y consejos para sacarle el máximo provecho a tu cuenta.
     </p>
-    <p>
-        Este sitio todavía está en construcción: por ahora es una primera versión
-        visual, armada con templates y estilos de Django. Más adelante vamos a
-        sumar los posts reales, cargados desde la base de datos.
-    </p>
+</section>
+
+<section class="destacados">
+    <div class="destacados-encabezado">
+        <h2>Últimas notas</h2>
+        <a href="{% url 'lista_posts' %}">Ver todas →</a>
+    </div>
+    <div class="grilla-posts">
+        {% for post in posts_destacados %}
+        <a href="{% url 'detalle_post' post.slug %}" class="tarjeta-post">
+            <span class="tarjeta-post-icono">{{ post.icono }}</span>
+            <h2>{{ post.titulo }}</h2>
+            <p>{{ post.resumen }}</p>
+            <div class="tarjeta-post-meta">
+                <span>{{ post.autor.nombre }}</span>
+                <span>{{ post.fecha|date:"d/m/Y" }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}

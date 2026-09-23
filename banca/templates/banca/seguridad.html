@@ -1,0 +1,18 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Seguridad - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Cómo cuidamos tu cuenta</h1>
+    <p>Esto es una demo educativa, pero armamos la seguridad como la armaría un banco real:</p>
+    <ul>
+        <li><strong>Contraseñas encriptadas:</strong> nunca guardamos tu contraseña en texto plano, Django la protege con hashing.</li>
+        <li><strong>Verificación en dos pasos:</strong> después de tu contraseña te pedimos un código antes de mostrarte la cuenta.</li>
+        <li><strong>Sesiones protegidas:</strong> las páginas de tu cuenta piden que estés identificado, si no, te mandan a iniciar sesión.</li>
+        <li><strong>Formularios protegidos:</strong> cada acción usa un token anti-falsificación (CSRF) para evitar operaciones en tu nombre desde otra web.</li>
+        <li><strong>Montos validados:</strong> no se puede depositar o retirar un monto negativo, ni retirar más de lo que tenés.</li>
+    </ul>
+    <p><em>Recordá: Tesoro Digital es un proyecto educativo de Coderhouse. No es una entidad real ni mueve dinero real.</em></p>
+</section>
+{% endblock %}

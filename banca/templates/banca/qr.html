@@ -1,0 +1,27 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Cobrar con QR - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="qr-seccion">
+    <h1>Cobrar con QR</h1>
+    <p>Quien escanee este código te puede transferir a vos, a la cuenta con alias <strong>{{ cuenta.alias }}</strong>.</p>
+
+    <form method="get" class="form-qr">
+        <label for="id_monto">Monto (opcional)</label>
+        <input type="number" step="0.01" min="0" id="id_monto" name="monto" value="{{ monto }}" placeholder="Dejalo vacío para que elijan el monto">
+        <button type="submit" class="boton boton-secundario">Actualizar QR</button>
+    </form>
+
+    <img src="{% url 'banca:qr_imagen' %}?monto={{ monto }}" alt="Código QR para cobrar" class="qr-imagen">
+
+    <p class="ayuda-transferencia">
+        Es un QR de ejemplo: codifica tu alias y, si pusiste uno, el monto. No lo procesa ninguna app real.
+    </p>
+</section>
+{% endblock %}

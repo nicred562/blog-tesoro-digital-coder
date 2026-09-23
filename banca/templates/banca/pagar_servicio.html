@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Pagar servicios - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Pagar un servicio</h1>
+    <p>Saldo disponible: <strong>${{ cuenta.saldo }}</strong></p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Pagar</button>
+    </form>
+    <p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+</section>
+{% endblock %}

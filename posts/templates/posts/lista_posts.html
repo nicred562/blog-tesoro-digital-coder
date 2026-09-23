@@ -1,0 +1,22 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Notas - Tesoro Digital{% endblock %}
+
+{% block content %}
+<h1>Notas del blog</h1>
+<p class="bajada-lista">Guías, novedades y consejos para sacarle provecho a tu cuenta.</p>
+
+<div class="grilla-posts">
+    {% for post in posts %}
+    <a href="{% url 'detalle_post' post.slug %}" class="tarjeta-post">
+        <span class="tarjeta-post-icono">{{ post.icono }}</span>
+        <h2>{{ post.titulo }}</h2>
+        <p>{{ post.resumen }}</p>
+        <div class="tarjeta-post-meta">
+            <span>{{ post.autor.nombre }}</span>
+            <span>{{ post.fecha|date:"d/m/Y" }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

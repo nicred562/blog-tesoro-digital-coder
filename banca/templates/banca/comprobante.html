@@ -1,0 +1,32 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Comprobante - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="comprobante">
+    <div class="comprobante-check">✔</div>
+    <h1>{{ mov.get_tipo_display }}</h1>
+    <p class="comprobante-monto {% if mov.es_ingreso %}monto-deposito{% else %}monto-extraccion{% endif %}">
+        {% if mov.es_ingreso %}+{% else %}-{% endif %}${{ mov.monto }}
+    </p>
+
+    <div class="comprobante-detalle">
+        <div class="comprobante-fila"><span>Fecha</span><span>{{ mov.fecha|date:"d/m/Y H:i" }}</span></div>
+        {% if mov.detalle_contraparte %}
+        <div class="comprobante-fila"><span>Detalle</span><span>{{ mov.detalle_contraparte }}</span></div>
+        {% endif %}
+        {% if mov.descripcion %}
+        <div class="comprobante-fila"><span>Nota</span><span>{{ mov.descripcion }}</span></div>
+        {% endif %}
+        <div class="comprobante-fila"><span>Saldo luego de la operación</span><span>${{ mov.saldo_posterior }}</span></div>
+        <div class="comprobante-fila"><span>Número de operación</span><span>#{{ mov.pk }}</span></div>
+    </div>
+
+    <a href="{% url 'banca:panel' %}" class="boton">Volver a mi cuenta</a>
+</section>
+{% endblock %}

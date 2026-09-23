@@ -1,0 +1,91 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Mi cuenta - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if solicitudes_pendientes %}
+<div class="aviso-solicitudes">
+    <span>Tenés {{ solicitudes_pendientes }} solicitud{{ solicitudes_pendientes|pluralize:"es" }} de dinero pendiente{{ solicitudes_pendientes|pluralize }}.</span>
+    <a href="{% url 'banca:solicitudes' %}">Ver solicitudes →</a>
+</div>
+{% endif %}
+
+<div class="panel-resumen">
+    <section class="panel-saldo">
+        <p class="numero-cuenta">Cuenta {{ cuenta.numero_cuenta }} &middot; alias {{ cuenta.alias }}</p>
+        <p class="numero-cuenta">CBU {{ cuenta.cbu }}</p>
+        <p class="saldo">${{ cuenta.saldo }}</p>
+        <p class="nota-rendimiento">Tu saldo gana rendimiento todos los días.</p>
+        <p>Hola, {{ user.first_name|default:user.username }}. <a href="{% url 'banca:perfil' %}" class="enlace-claro">Editar perfil</a></p>
+    </section>
+
+    <div class="tarjeta-columna">
+        <div class="tarjeta-virtual {% if cuenta.tarjeta_bloqueada %}tarjeta-bloqueada{% endif %}">
+            <div class="fila-superior">
+                <span class="marca-tarjeta">TESORO DIGITAL</span>
+                <div class="red-tarjeta"><span></span><span></span></div>
+            </div>
+            <div class="chip"></div>
+            <p class="numero">{{ cuenta.tarjeta_enmascarada }}</p>
+            <div class="fila-inferior">
+                <span class="titular">{{ user.get_full_name|default:user.username }}</span>
+                <span class="vencimiento"><span class="etiqueta">Vence</span>{{ cuenta.vencimiento_tarjeta }}</span>
+            </div>
+            {% if cuenta.tarjeta_bloqueada %}<div class="tarjeta-bloqueada-aviso">Bloqueada</div>{% endif %}
+        </div>
+        <form method="post" action="{% url 'banca:alternar_bloqueo_tarjeta' %}">
+            {% csrf_token %}
+            <button type="submit" class="boton boton-secundario boton-ancho">
+                {% if cuenta.tarjeta_bloqueada %}Reactivar tarjeta{% else %}Bloquear tarjeta{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="accesos-grid">
+    <a href="{% url 'banca:depositar' %}" class="acceso"><span class="acceso-icono">💰</span>Depositar</a>
+    <a href="{% url 'banca:retirar' %}" class="acceso"><span class="acceso-icono">🏧</span>Retirar</a>
+    <a href="{% url 'banca:transferir' %}" class="acceso"><span class="acceso-icono">🔁</span>Transferir</a>
+    <a href="{% url 'banca:qr_cobrar' %}" class="acceso"><span class="acceso-icono">🔳</span>Cobrar con QR</a>
+    <a href="{% url 'banca:solicitar_dinero' %}" class="acceso"><span class="acceso-icono">🤝</span>Pedir dinero</a>
+    <a href="{% url 'banca:pagar_servicio' %}" class="acceso"><span class="acceso-icono">🧾</span>Pagar servicios</a>
+    <a href="{% url 'banca:recargar_celular' %}" class="acceso"><span class="acceso-icono">📱</span>Recargar celular</a>
+    <a href="{% url 'banca:contactos' %}" class="acceso"><span class="acceso-icono">👥</span>Contactos</a>
+    <a href="{% url 'banca:resumen' %}" class="acceso"><span class="acceso-icono">📊</span>Resumen</a>
+    <a href="{% url 'banca:movimientos' %}" class="acceso"><span class="acceso-icono">📄</span>Movimientos</a>
+</div>
+
+<section>
+    <h2>Últimos movimientos</h2>
+    {% if movimientos %}
+        <table class="movimientos">
+            <thead>
+                <tr><th>Fecha</th><th>Detalle</th><th>Monto</th><th>Saldo</th></tr>
+            </thead>
+            <tbody>
+                {% for mov in movimientos %}
+                <tr class="fila-movimiento" onclick="window.location='{% url 'banca:comprobante' mov.pk %}'">
+                    <td>{{ mov.fecha|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {{ mov.get_tipo_display }}
+                        {% if mov.detalle_contraparte %}<small>{{ mov.detalle_contraparte }}</small>{% endif %}
+                        {% if mov.descripcion %}<small>{{ mov.descripcion }}</small>{% endif %}
+                    </td>
+                    <td class="{% if mov.es_ingreso %}monto-deposito{% else %}monto-extraccion{% endif %}">
+                        {% if mov.es_ingreso %}+{% else %}-{% endif %}${{ mov.monto }}
+                    </td>
+                    <td>${{ mov.saldo_posterior }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Todavía no tenés movimientos. ¡Hacé tu primer depósito!</p>
+    {% endif %}
+</section>
+{% endblock %}

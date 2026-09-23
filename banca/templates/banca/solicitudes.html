@@ -1,0 +1,66 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Solicitudes - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Solicitudes de dinero</h1>
+
+<section>
+    <h2>Te piden</h2>
+    {% if recibidas %}
+        <ul class="lista-solicitudes">
+            {% for s in recibidas %}
+            <li>
+                <div>
+                    <strong>{{ s.solicitante.alias }}</strong> te pide <strong>${{ s.monto }}</strong>
+                    {% if s.descripcion %}<br><small>{{ s.descripcion }}</small>{% endif %}
+                </div>
+                <div class="acciones-contacto">
+                    <form method="post" action="{% url 'banca:pagar_solicitud' s.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="boton">Pagar</button>
+                    </form>
+                    <form method="post" action="{% url 'banca:cancelar_solicitud' s.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="boton boton-secundario">Rechazar</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nadie te pidió dinero.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h2>Pediste</h2>
+    {% if enviadas %}
+        <ul class="lista-solicitudes">
+            {% for s in enviadas %}
+            <li>
+                <div>
+                    Le pediste <strong>${{ s.monto }}</strong> a <strong>{{ s.destinatario.alias }}</strong>
+                    <br><small>Estado: {{ s.get_estado_display }}</small>
+                </div>
+                {% if s.estado == 'pendiente' %}
+                <form method="post" action="{% url 'banca:cancelar_solicitud' s.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton-secundario">Cancelar</button>
+                </form>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Todavía no le pediste dinero a nadie.</p>
+    {% endif %}
+</section>
+
+<p><a href="{% url 'banca:solicitar_dinero' %}" class="boton">Pedir dinero</a></p>
+{% endblock %}

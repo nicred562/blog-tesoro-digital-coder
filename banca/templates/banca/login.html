@@ -1,0 +1,16 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Ingresar - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Ingresá a tu cuenta</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Ingresar</button>
+    </form>
+    <p>¿No tenés cuenta? <a href="{% url 'banca:registro' %}">Creá una gratis</a>.</p>
+</section>
+{% endblock %}

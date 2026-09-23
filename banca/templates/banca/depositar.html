@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Depositar - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Depositar dinero</h1>
+    <p>Saldo actual: <strong>${{ cuenta.saldo }}</strong></p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Confirmar depósito</button>
+    </form>
+    <p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+</section>
+{% endblock %}

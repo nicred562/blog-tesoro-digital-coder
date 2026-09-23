@@ -1,0 +1,44 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Resumen - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Resumen de tu cuenta</h1>
+
+<div class="resumen-totales">
+    <div class="resumen-tile resumen-ingreso">
+        <span class="resumen-etiqueta">Total ingresado</span>
+        <span class="resumen-valor">${{ total_ingresos }}</span>
+    </div>
+    <div class="resumen-tile resumen-egreso">
+        <span class="resumen-etiqueta">Total gastado</span>
+        <span class="resumen-valor">${{ total_egresos }}</span>
+    </div>
+</div>
+
+<section>
+    <h2>Por tipo de movimiento</h2>
+    {% if barras %}
+        <div class="barras">
+            {% for barra in barras %}
+            <div class="barra-fila">
+                <span class="barra-etiqueta">{{ barra.etiqueta }}</span>
+                <div class="barra-pista">
+                    <div class="barra-relleno" style="width: {{ barra.porcentaje }}%;"></div>
+                </div>
+                <span class="barra-monto">${{ barra.monto }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Todavía no tenés movimientos para mostrar.</p>
+    {% endif %}
+</section>
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}

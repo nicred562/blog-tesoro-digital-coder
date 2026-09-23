@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Tesoro Digital">
+  <defs>
+    <linearGradient id="td-fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a3d62"/>
+      <stop offset="100%" stop-color="#0d5c8c"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 3 L58 12 V29 C58 45 47 56 32 61 C17 56 6 45 6 29 V12 Z"
+        fill="url(#td-fondo)" stroke="#1abc9c" stroke-width="2"/>
+  <circle cx="32" cy="30" r="13" fill="none" stroke="#eafaf6" stroke-width="2.5"/>
+  <circle cx="32" cy="30" r="3" fill="#1abc9c"/>
+  <line x1="32" y1="30" x2="32" y2="21" stroke="#eafaf6" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="32" y1="30" x2="38" y2="30" stroke="#1abc9c" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="24" y="43" width="16" height="4" rx="2" fill="#eafaf6"/>
+</svg>

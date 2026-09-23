@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Aplicaciones propias
     'posts.apps.PostsConfig',
+    'banca.apps.BancaConfig',
 ]
 
 MIDDLEWARE = [
@@ -118,12 +119,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Archivos que suben los usuarios (fotos de perfil, por ahora)
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# A donde manda Django cuando una vista pide login (@login_required)
+LOGIN_URL = 'banca:ingresar'
+
+
+# Email: por ahora solo se imprime en la terminal, no manda nada real
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

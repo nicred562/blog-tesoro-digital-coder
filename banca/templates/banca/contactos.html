@@ -1,0 +1,47 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Contactos - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Contactos</h1>
+
+<section class="formulario-angosto">
+    <h2>Agregar contacto</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Guardar contacto</button>
+    </form>
+</section>
+
+<section>
+    <h2>Tus contactos</h2>
+    {% if contactos %}
+        <ul class="lista-contactos">
+            {% for contacto in contactos %}
+            <li>
+                <div>
+                    <strong>{{ contacto.nombre_mostrado }}</strong>
+                    <small>{{ contacto.cuenta_guardada.alias }}</small>
+                </div>
+                <div class="acciones-contacto">
+                    <a href="{% url 'banca:transferir' %}?destino={{ contacto.cuenta_guardada.alias }}" class="boton boton-secundario">Transferir</a>
+                    <form method="post" action="{% url 'banca:eliminar_contacto' contacto.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="enlace-boton-oscuro">Eliminar</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Todavía no guardaste ningún contacto.</p>
+    {% endif %}
+</section>
+{% endblock %}

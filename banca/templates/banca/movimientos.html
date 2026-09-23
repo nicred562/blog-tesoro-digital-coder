@@ -1,0 +1,40 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Movimientos - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Movimientos de la cuenta {{ cuenta.numero_cuenta }}</h1>
+
+{% if movimientos %}
+    <table class="movimientos">
+        <thead>
+            <tr><th>Fecha</th><th>Detalle</th><th>Monto</th><th>Saldo</th></tr>
+        </thead>
+        <tbody>
+            {% for mov in movimientos %}
+            <tr class="fila-movimiento" onclick="window.location='{% url 'banca:comprobante' mov.pk %}'">
+                <td>{{ mov.fecha|date:"d/m/Y H:i" }}</td>
+                <td>
+                    {{ mov.get_tipo_display }}
+                    {% if mov.detalle_contraparte %}<small>{{ mov.detalle_contraparte }}</small>{% endif %}
+                    {% if mov.descripcion %}<small>{{ mov.descripcion }}</small>{% endif %}
+                </td>
+                <td class="{% if mov.es_ingreso %}monto-deposito{% else %}monto-extraccion{% endif %}">
+                    {% if mov.es_ingreso %}+{% else %}-{% endif %}${{ mov.monto }}
+                </td>
+                <td>${{ mov.saldo_posterior }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Todavía no tenés movimientos.</p>
+{% endif %}
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}

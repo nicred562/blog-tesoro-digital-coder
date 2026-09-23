@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Verificación - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Verificá que sos vos</h1>
+    <p>En un banco real este código llega por SMS o email. Como esto es una demo, te lo mostramos directamente:</p>
+    <div class="codigo-demo">{{ codigo_demo }}</div>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Confirmar</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Tesoro Digital - Tu banco digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-texto">
+        <h1>Manejá tu plata sin vueltas</h1>
+        <p>
+            Abrí una cuenta gratis, depositá y retirá cuando quieras, y mirá
+            todos tus movimientos en un solo lugar. Simple, rápido y con la
+            seguridad de un banco de verdad.
+        </p>
+        <div class="hero-acciones">
+            {% if user.is_authenticated %}
+                <a href="{% url 'banca:panel' %}" class="boton">Ir a mi cuenta</a>
+            {% else %}
+                <a href="{% url 'banca:registro' %}" class="boton">Crear cuenta gratis</a>
+                <a href="{% url 'banca:ingresar' %}" class="boton boton-secundario">Ya tengo cuenta</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="hero-imagen">
+        <div class="mockup-app">
+            <div class="mockup-barra">
+                <span class="mockup-punto"></span>
+                <span class="mockup-punto"></span>
+                <span class="mockup-punto"></span>
+            </div>
+            <div class="mockup-saldo">
+                <span class="mockup-etiqueta">Saldo disponible</span>
+                <span class="mockup-monto">$128.450,32</span>
+            </div>
+            <ul class="mockup-movs">
+                <li>
+                    <span class="mockup-icono ingreso">↓</span>
+                    <span>Sueldo</span>
+                    <span class="mockup-monto-chico ingreso">+$95.000</span>
+                </li>
+                <li>
+                    <span class="mockup-icono egreso">↑</span>
+                    <span>Pago de servicios</span>
+                    <span class="mockup-monto-chico egreso">-$8.300</span>
+                </li>
+                <li>
+                    <span class="mockup-icono ingreso">↓</span>
+                    <span>Transferencia recibida</span>
+                    <span class="mockup-monto-chico ingreso">+$25.000</span>
+                </li>
+            </ul>
+        </div>
+        <p class="mockup-nota">Vista de ejemplo</p>
+    </div>
+</section>
+
+<section class="stats-franja">
+    <div class="stat">
+        <span class="stat-numero">+50.000</span>
+        <span class="stat-etiqueta">Cuentas abiertas</span>
+    </div>
+    <div class="stat">
+        <span class="stat-numero">$0</span>
+        <span class="stat-etiqueta">Costo de mantenimiento</span>
+    </div>
+    <div class="stat">
+        <span class="stat-numero">24/7</span>
+        <span class="stat-etiqueta">Disponible siempre</span>
+    </div>
+    <div class="stat">
+        <span class="stat-numero">2 min</span>
+        <span class="stat-etiqueta">Para abrir tu cuenta</span>
+    </div>
+</section>
+
+<section class="como-funciona">
+    <h2>Así de simple</h2>
+    <div class="pasos">
+        <div class="paso">
+            <span class="paso-numero">1</span>
+            <h3>Creá tu cuenta</h3>
+            <p>Con tu nombre, un usuario y una contraseña. Menos de un minuto.</p>
+        </div>
+        <div class="paso">
+            <span class="paso-numero">2</span>
+            <h3>Cargá saldo</h3>
+            <p>Depositá el monto que quieras para empezar a moverte.</p>
+        </div>
+        <div class="paso">
+            <span class="paso-numero">3</span>
+            <h3>Manejalo desde acá</h3>
+            <p>Transferí, retirá y mirá cada movimiento en un solo lugar.</p>
+        </div>
+    </div>
+</section>
+
+<section class="caracteristicas">
+    <div class="caracteristica">
+        <div class="icono">💰</div>
+        <h3>Depósitos al instante</h3>
+        <p>Cargá saldo a tu cuenta cuando quieras, sin esperar días hábiles.</p>
+    </div>
+    <div class="caracteristica">
+        <div class="icono">🔁</div>
+        <h3>Transferencias directas</h3>
+        <p>Mandale plata a otra cuenta de Tesoro Digital con solo su número.</p>
+    </div>
+    <div class="caracteristica">
+        <div class="icono">📊</div>
+        <h3>Movimientos claros</h3>
+        <p>Historial completo de cada operación, con fecha, nota y saldo.</p>
+    </div>
+</section>
+
+<section class="testimonios">
+    <h2>Lo que dicen quienes ya lo usan</h2>
+    <div class="testimonios-grilla">
+        <blockquote>
+            <p>"Abrí la cuenta, cargué saldo y en dos minutos ya estaba transfiriendo. Nunca fue tan fácil."</p>
+            <cite>Martina G.</cite>
+        </blockquote>
+        <blockquote>
+            <p>"Me gusta poder ver cada movimiento con fecha y nota, se entiende todo de un vistazo."</p>
+            <cite>Diego R.</cite>
+        </blockquote>
+        <blockquote>
+            <p>"La verificación en dos pasos me da tranquilidad de que mi cuenta está protegida."</p>
+            <cite>Sofía A.</cite>
+        </blockquote>
+    </div>
+</section>
+
+<section class="franja-seguridad">
+    <h2>Tu cuenta, protegida</h2>
+    <p>Verificación en dos pasos, contraseñas encriptadas y control total desde tu cuenta.</p>
+    <div class="badges-seguridad">
+        <span class="badge">🔒 Contraseñas encriptadas</span>
+        <span class="badge">📱 Verificación en 2 pasos</span>
+        <span class="badge">🛡️ Sesión protegida</span>
+    </div>
+    <p class="enlace-seguridad"><a href="{% url 'banca:seguridad' %}">Conocé cómo cuidamos tu cuenta →</a></p>
+</section>
+
+<section class="cta-final">
+    {% if user.is_authenticated %}
+        <h2>Ya sos parte de Tesoro Digital</h2>
+        <p>Segui manejando tu cuenta cuando quieras.</p>
+        <a href="{% url 'banca:panel' %}" class="boton boton-grande">Ir a mi cuenta</a>
+    {% else %}
+        <h2>Tu plata, en un solo lugar</h2>
+        <p>Abrí tu cuenta gratis y empezá a usarla ahora mismo.</p>
+        <a href="{% url 'banca:registro' %}" class="boton boton-grande">Crear cuenta gratis</a>
+    {% endif %}
+</section>
+{% endblock %}

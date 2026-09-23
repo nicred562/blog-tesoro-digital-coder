@@ -1,0 +1,54 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Mi perfil - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Mi perfil</h1>
+
+<div class="perfil-layout">
+    <section class="perfil-datos">
+        <h2>Foto y alias</h2>
+        {% if cuenta.foto %}
+            <img src="{{ cuenta.foto.url }}" alt="Tu foto de perfil" class="avatar-grande">
+        {% else %}
+            <div class="avatar-grande avatar-inicial">{{ user.first_name|default:user.username|first|upper }}</div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" class="form-perfil">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Guardar cambios</button>
+        </form>
+    </section>
+
+    <section class="perfil-datos-bancarios">
+        <h2>Tus datos para recibir plata</h2>
+        <div class="dato-copiable">
+            <span class="dato-etiqueta">Alias</span>
+            <span class="dato-valor">{{ cuenta.alias }}</span>
+        </div>
+        <div class="dato-copiable">
+            <span class="dato-etiqueta">CBU</span>
+            <span class="dato-valor dato-cbu">{{ cuenta.cbu }}</span>
+        </div>
+        <div class="dato-copiable">
+            <span class="dato-etiqueta">Número de cuenta</span>
+            <span class="dato-valor">{{ cuenta.numero_cuenta }}</span>
+        </div>
+        <div class="dato-copiable">
+            <span class="dato-etiqueta">Número de tarjeta</span>
+            <span class="dato-valor dato-cbu">{{ cuenta.numero_tarjeta_formateado }} &middot; vence {{ cuenta.vencimiento_tarjeta }}</span>
+        </div>
+        <p class="ayuda-transferencia">
+            Compartí cualquiera de estos datos para que te transfieran desde otra cuenta de Tesoro Digital.
+        </p>
+    </section>
+</div>
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}
