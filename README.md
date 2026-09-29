@@ -4,7 +4,12 @@ Proyecto base del blog web de **Tesoro Digital**, un banco digital. El blog va a
 
 ## Descripción
 
-Contiene la estructura inicial de un proyecto Django (`blog_project`) y una aplicación llamada `posts`, con idioma `es-ar` y zona horaria `America/Argentina/Buenos_Aires`. Ya tiene una primera versión navegable, con templates HTML y estilos propios. Todavía no tiene modelos ni base de datos.
+Proyecto Django (`blog_project`) con dos apps:
+
+- `posts`: el blog en sí (notas, ayuda, términos). Sin modelos ni base de datos: los posts viven en una lista de Python (`posts/datos.py`).
+- `banca`: una demo de banca online (cuentas, depósitos, retiros, transferencias, tarjeta virtual, etc.), con modelos y base de datos SQLite. Es un agregado aparte, no forma parte de lo que pide el checkpoint de `posts`.
+
+Idioma `es-ar`, zona horaria `America/Argentina/Buenos_Aires`.
 
 ## Instalación
 
@@ -44,6 +49,12 @@ Instalar las dependencias:
 pip install -r requirements.txt
 ```
 
+Crear la base de datos (la usa la app `banca`):
+
+```bash
+python manage.py migrate
+```
+
 Levantar el servidor de desarrollo:
 
 ```bash
@@ -52,12 +63,16 @@ python manage.py runserver
 
 Abrir en el navegador:
 
-- http://127.0.0.1:8000/ → página de inicio
+- http://127.0.0.1:8000/ → página de inicio del blog
+- http://127.0.0.1:8000/notas/ → listado de notas
 - http://127.0.0.1:8000/acerca/ → página "Acerca de"
+- http://127.0.0.1:8000/ayuda/ y http://127.0.0.1:8000/terminos/
+- http://127.0.0.1:8000/banca/ → landing de la banca online (registro, login, cuentas, etc.)
 
 ## Aplicaciones
 
-- `posts`: aplicación del blog. Todavía no tiene modelos ni base de datos, pero ya define las rutas, vistas y templates de las páginas de Inicio y Acerca de.
+- `posts`: el blog. Sin modelos ni base de datos: define rutas, vistas (con `render()`) y templates para Inicio, Notas, Acerca de, Ayuda y Términos.
+- `banca`: demo de banca online (agregado extra, fuera de lo que pide el checkpoint de `posts`). Usa modelos y base de datos: cuentas con alias/CBU/tarjeta virtual, login en dos pasos, depósitos, retiros, transferencias, pago de servicios, recarga de celular, contactos, solicitudes de dinero, QR para cobrar y resumen de gastos.
 
 ## Estructura del proyecto Django
 
@@ -67,16 +82,21 @@ blog_consola/
 ├── requirements.txt
 ├── .gitignore
 ├── blog_project/          (configuración del proyecto Django)
-└── posts/                 (app del blog)
-    ├── urls.py            (rutas de la app: inicio y acerca)
-    ├── views.py           (funciones inicio y acerca, con render())
-    ├── templates/posts/   (base.html, inicio.html, acerca.html)
-    └── static/posts/css/  (estilos.css)
+├── posts/                 (app del blog, sin modelos)
+│   ├── urls.py
+│   ├── views.py
+│   ├── datos.py           (posts en una lista de Python)
+│   ├── templates/posts/   (base.html, inicio.html, acerca.html, lista_posts.html, detalle_post.html, ayuda.html, terminos.html)
+│   └── static/posts/css/  (estilos.css)
+└── banca/                 (app de banca online, con modelos y base de datos)
+    ├── models.py, forms.py, views.py, urls.py
+    ├── templates/banca/
+    └── static/banca/css/
 ```
 
 ## Páginas y navegación
 
-El sitio tiene un template base (`base.html`) con el menú de navegación, del que heredan `inicio.html` y `acerca.html` usando `{% extends %}`. Desde el menú se puede ir de una página a la otra.
+El sitio tiene un template base (`posts/templates/posts/base.html`) compartido por las dos apps, con el menú de navegación y el pie de página. De ahí heredan todos los templates usando `{% extends %}`.
 
 ---
 
