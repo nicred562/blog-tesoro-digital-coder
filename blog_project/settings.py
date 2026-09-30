@@ -113,6 +113,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Separador de miles en los montos (ej: $1.234.567,89 en vez de $1234567.89)
+USE_THOUSAND_SEPARATOR = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/

@@ -20,6 +20,10 @@ def terminos(request):
     return render(request, 'posts/terminos.html')
 
 
+def contacto(request):
+    return render(request, 'posts/contacto.html')
+
+
 def lista_posts(request):
     posts = Post.objects.filter(estado="publicado").order_by("-fecha_creacion")
     context = {

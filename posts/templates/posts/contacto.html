@@ -1,0 +1,36 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Contacto - Tesoro Digital{% endblock %}
+
+{% block content %}
+<h1>Contacto</h1>
+<p class="bajada-lista">¿Necesitás ayuda? Elegí el medio que más te convenga.</p>
+
+<div class="contacto-grilla">
+    <div class="contacto-dato">
+        <div class="icono">✉️</div>
+        <h3>Email</h3>
+        <p>ayuda@tesorodigital.com</p>
+    </div>
+    <div class="contacto-dato">
+        <div class="icono">📞</div>
+        <h3>Teléfono</h3>
+        <p>0800-555-0100</p>
+    </div>
+    <div class="contacto-dato">
+        <div class="icono">🏢</div>
+        <h3>Oficina</h3>
+        <p>Av. Ficticia 1234, CABA</p>
+    </div>
+    <div class="contacto-dato">
+        <div class="icono">🕒</div>
+        <h3>Horario</h3>
+        <p>Lunes a viernes, 9 a 18 h</p>
+    </div>
+</div>
+
+<p class="ayuda-transferencia" style="margin-top: 1.5rem;">
+    Estos datos son de ejemplo: Tesoro Digital es un proyecto educativo y no tiene oficinas ni línea de atención real.
+    Para dudas sobre el sitio, mirá la sección de <a href="{% url 'ayuda' %}">Ayuda</a>.
+</p>
+{% endblock %}

@@ -27,6 +27,9 @@
         <div class="comprobante-fila"><span>Número de operación</span><span>#{{ mov.pk }}</span></div>
     </div>
 
-    <a href="{% url 'banca:panel' %}" class="boton">Volver a mi cuenta</a>
+    <div class="comprobante-acciones">
+        <a href="{% url 'banca:panel' %}" class="boton">Volver a mi cuenta</a>
+        <button type="button" class="boton boton-secundario" onclick="window.print()">Imprimir comprobante</button>
+    </div>
 </section>
 {% endblock %}

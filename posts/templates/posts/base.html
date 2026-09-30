@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Tesoro Digital{% endblock %}</title>
+    <meta name="description" content="{% block meta_descripcion %}Tesoro Digital: banco digital ficticio para practicar Django. Blog, cuentas, transferencias y más.{% endblock %}">
     <script>
         (function () {
             try {
@@ -87,6 +88,7 @@
                 <span class="pie-titulo">Ayuda</span>
                 <a href="{% url 'ayuda' %}">Preguntas frecuentes</a>
                 <a href="{% url 'terminos' %}">Términos y condiciones</a>
+                <a href="{% url 'contacto' %}">Contacto</a>
             </div>
         </div>
         <div class="pie-legal">

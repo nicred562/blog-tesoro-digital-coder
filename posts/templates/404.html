@@ -1,0 +1,12 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Página no encontrada - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="pagina-error">
+    <span class="pagina-error-codigo">404</span>
+    <h1>No encontramos esta página</h1>
+    <p>El enlace puede estar roto o la página se movió de lugar.</p>
+    <a href="{% url 'inicio' %}" class="boton">Volver al inicio</a>
+</section>
+{% endblock %}

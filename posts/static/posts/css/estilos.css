@@ -531,3 +531,82 @@ form ul.errorlist {
     font-weight: bold;
     margin: 1rem 0;
 }
+
+/* Pagina de error 404 */
+
+.pagina-error {
+    max-width: 420px;
+    margin: 3rem auto;
+    text-align: center;
+}
+
+.pagina-error-codigo {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--color-acento);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.pagina-error h1 {
+    color: var(--texto-marca);
+    margin: 0 0 0.5rem;
+}
+
+.pagina-error .boton {
+    margin-top: 1.2rem;
+}
+
+/* Contacto */
+
+.contacto-grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+}
+
+.contacto-dato {
+    background-color: var(--superficie);
+    border-radius: 10px;
+    padding: 1.3rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.contacto-dato .icono {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.contacto-dato h3 {
+    margin: 0 0 0.3rem;
+    color: var(--texto-marca);
+    font-size: 1rem;
+}
+
+.contacto-dato p {
+    margin: 0;
+    color: var(--texto-muted);
+    font-size: 0.9rem;
+}
+
+/* Comprobante: version imprimible */
+
+@media print {
+    .cabecera,
+    .pie,
+    .mensajes,
+    .comprobante-acciones {
+        display: none !important;
+    }
+
+    .contenido {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .comprobante {
+        box-shadow: none;
+    }
+}
