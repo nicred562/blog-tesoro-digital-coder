@@ -6,8 +6,8 @@ Proyecto base del blog web de **Tesoro Digital**, un banco digital. El blog va a
 
 Proyecto Django (`blog_project`) con dos apps:
 
-- `posts`: el blog en sí (notas, ayuda, términos). Sin modelos ni base de datos: los posts viven en una lista de Python (`posts/datos.py`).
-- `banca`: una demo de banca online (cuentas, depósitos, retiros, transferencias, tarjeta virtual, etc.), con modelos y base de datos SQLite. Es un agregado aparte, no forma parte de lo que pide el checkpoint de `posts`.
+- `posts`: el blog en sí (notas, ayuda, términos). Los posts son un modelo (`Post`) gestionado desde el panel de administración de Django, con base de datos SQLite.
+- `banca`: una demo de banca online (cuentas, depósitos, retiros, transferencias, tarjeta virtual, etc.), también con modelos y base de datos SQLite. Es un agregado aparte, no forma parte de lo que pide el checkpoint de `posts`.
 
 Idioma `es-ar`, zona horaria `America/Argentina/Buenos_Aires`.
 
@@ -49,11 +49,19 @@ Instalar las dependencias:
 pip install -r requirements.txt
 ```
 
-Crear la base de datos (la usa la app `banca`):
+Crear la base de datos:
 
 ```bash
 python manage.py migrate
 ```
+
+Crear un usuario administrador (para poder entrar a `/admin/` y cargar posts):
+
+```bash
+python manage.py createsuperuser
+```
+
+Va a pedir un nombre de usuario, un email y una contraseña. Con eso ya se puede entrar al panel.
 
 Levantar el servidor de desarrollo:
 
@@ -64,14 +72,15 @@ python manage.py runserver
 Abrir en el navegador:
 
 - http://127.0.0.1:8000/ → página de inicio del blog
-- http://127.0.0.1:8000/notas/ → listado de notas
+- http://127.0.0.1:8000/notas/ → listado de notas (cargadas desde el panel admin)
 - http://127.0.0.1:8000/acerca/ → página "Acerca de"
 - http://127.0.0.1:8000/ayuda/ y http://127.0.0.1:8000/terminos/
+- http://127.0.0.1:8000/admin/ → panel de administración, para cargar/editar posts (usá el usuario que creaste con `createsuperuser`)
 - http://127.0.0.1:8000/banca/ → landing de la banca online (registro, login, cuentas, etc.)
 
 ## Aplicaciones
 
-- `posts`: el blog. Sin modelos ni base de datos: define rutas, vistas (con `render()`) y templates para Inicio, Notas, Acerca de, Ayuda y Términos.
+- `posts`: el blog. El modelo `Post` (título, contenido, autor, fecha de creación y estado: borrador/publicado/archivado) se administra desde `/admin/`. La página de notas solo muestra los posts con estado "publicado", consultados con el ORM (`Post.objects.filter(estado="publicado")`).
 - `banca`: demo de banca online (agregado extra, fuera de lo que pide el checkpoint de `posts`). Usa modelos y base de datos: cuentas con alias/CBU/tarjeta virtual, login en dos pasos, depósitos, retiros, transferencias, pago de servicios, recarga de celular, contactos, solicitudes de dinero, QR para cobrar y resumen de gastos.
 
 ## Estructura del proyecto Django
@@ -82,10 +91,12 @@ blog_consola/
 ├── requirements.txt
 ├── .gitignore
 ├── blog_project/          (configuración del proyecto Django)
-├── posts/                 (app del blog, sin modelos)
+├── posts/                 (app del blog)
+│   ├── models.py          (modelo Post)
+│   ├── admin.py           (PostAdmin: columnas de titulo, autor, estado y fecha)
 │   ├── urls.py
 │   ├── views.py
-│   ├── datos.py           (posts en una lista de Python)
+│   ├── migrations/
 │   ├── templates/posts/   (base.html, inicio.html, acerca.html, lista_posts.html, detalle_post.html, ayuda.html, terminos.html)
 │   └── static/posts/css/  (estilos.css)
 └── banca/                 (app de banca online, con modelos y base de datos)

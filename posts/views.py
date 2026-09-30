@@ -1,11 +1,11 @@
-from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
-from .datos import obtener_post, obtener_posts
+from .models import Post
 
 
 def inicio(request):
-    return render(request, 'posts/inicio.html', {'posts_destacados': obtener_posts()[:3]})
+    posts_destacados = Post.objects.filter(estado=Post.Estado.PUBLICADO).order_by("-fecha_creacion")[:3]
+    return render(request, 'posts/inicio.html', {'posts_destacados': posts_destacados})
 
 
 def acerca(request):
@@ -21,11 +21,13 @@ def terminos(request):
 
 
 def lista_posts(request):
-    return render(request, 'posts/lista_posts.html', {'posts': obtener_posts()})
+    posts = Post.objects.filter(estado="publicado").order_by("-fecha_creacion")
+    context = {
+        "posts": posts
+    }
+    return render(request, "posts/lista_posts.html", context)
 
 
 def detalle_post(request, slug):
-    post = obtener_post(slug)
-    if post is None:
-        raise Http404("Ese post no existe.")
+    post = get_object_or_404(Post, slug=slug, estado=Post.Estado.PUBLICADO)
     return render(request, 'posts/detalle_post.html', {'post': post})

@@ -11,12 +11,14 @@
     <a href="{% url 'detalle_post' post.slug %}" class="tarjeta-post">
         <span class="tarjeta-post-icono">{{ post.icono }}</span>
         <h2>{{ post.titulo }}</h2>
-        <p>{{ post.resumen }}</p>
+        <p>{{ post.resumen|default:post.contenido|truncatewords:25 }}</p>
         <div class="tarjeta-post-meta">
-            <span>{{ post.autor.nombre }}</span>
-            <span>{{ post.fecha|date:"d/m/Y" }}</span>
+            <span>{{ post.autor }}</span>
+            <span>{{ post.fecha_creacion|date:"d/m/Y" }}</span>
         </div>
     </a>
+    {% empty %}
+    <p>Todavía no hay notas publicadas. ¡Cargá la primera desde el panel de administración!</p>
     {% endfor %}
 </div>
 {% endblock %}

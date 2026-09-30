@@ -8,11 +8,8 @@
     <span class="tarjeta-post-icono">{{ post.icono }}</span>
     <h1>{{ post.titulo }}</h1>
     <div class="post-detalle-meta">
-        <span>{{ post.autor.nombre }} &middot; {{ post.autor.rol }}</span>
-        <span>{{ post.fecha|date:"d/m/Y" }}</span>
-    </div>
-    <div class="post-detalle-tags">
-        {% for tag in post.tags %}<span class="badge-tag">{{ tag }}</span>{% endfor %}
+        <span>{{ post.autor }}</span>
+        <span>{{ post.fecha_creacion|date:"d/m/Y" }}</span>
     </div>
     <div class="post-detalle-cuerpo">
         {{ post.contenido|linebreaks }}
