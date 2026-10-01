@@ -48,6 +48,7 @@ from .models import (
     generar_cbu,
     generar_numero_cuenta,
     generar_tarjeta,
+    obtener_o_crear_cuenta,
 )
 
 
@@ -145,7 +146,7 @@ def cerrar_sesion(request):
 
 @login_required
 def panel(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     cuenta.acreditar_rendimiento()
     return render(request, "banca/panel.html", {
         "cuenta": cuenta,
@@ -156,7 +157,7 @@ def panel(request):
 
 @login_required
 def depositar(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = MontoForm(request.POST)
@@ -181,7 +182,7 @@ def depositar(request):
 
 @login_required
 def retirar(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = RetiroForm(request.POST, saldo_disponible=cuenta.saldo)
@@ -206,7 +207,7 @@ def retirar(request):
 
 @login_required
 def transferir(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = TransferenciaForm(request.POST, cuenta_origen=cuenta)
@@ -250,7 +251,7 @@ def transferir(request):
 
 @login_required
 def pagar_servicio(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = PagoServicioForm(request.POST, saldo_disponible=cuenta.saldo)
@@ -278,7 +279,7 @@ def pagar_servicio(request):
 
 @login_required
 def recargar_celular(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = RecargaForm(request.POST, saldo_disponible=cuenta.saldo)
@@ -306,7 +307,7 @@ def recargar_celular(request):
 
 @login_required
 def movimientos(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     return render(request, "banca/movimientos.html", {
         "cuenta": cuenta,
         "movimientos": cuenta.movimientos.all(),
@@ -315,14 +316,14 @@ def movimientos(request):
 
 @login_required
 def comprobante(request, pk):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     mov = get_object_or_404(Movimiento, pk=pk, cuenta=cuenta)
     return render(request, "banca/comprobante.html", {"cuenta": cuenta, "mov": mov})
 
 
 @login_required
 def resumen(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     cuenta.acreditar_rendimiento()
 
     etiquetas = dict(Movimiento.TIPO_CHOICES)
@@ -359,14 +360,14 @@ def resumen(request):
 
 @login_required
 def qr_cobrar(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     monto = request.GET.get("monto", "").strip()
     return render(request, "banca/qr.html", {"cuenta": cuenta, "monto": monto})
 
 
 @login_required
 def qr_imagen(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     monto = request.GET.get("monto", "").strip()
 
     contenido = f"tesorodigital://pagar?alias={cuenta.alias}"
@@ -381,7 +382,7 @@ def qr_imagen(request):
 
 @login_required
 def contactos(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = ContactoForm(request.POST, cuenta_propia=cuenta)
@@ -414,7 +415,7 @@ def eliminar_contacto(request, pk):
 
 @login_required
 def solicitar_dinero(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = SolicitudForm(request.POST, cuenta_propia=cuenta)
@@ -435,7 +436,7 @@ def solicitar_dinero(request):
 
 @login_required
 def solicitudes(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     return render(request, "banca/solicitudes.html", {
         "cuenta": cuenta,
         "recibidas": cuenta.solicitudes_recibidas.filter(estado=SolicitudDinero.PENDIENTE),
@@ -446,7 +447,7 @@ def solicitudes(request):
 @login_required
 @require_POST
 def pagar_solicitud(request, pk):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     solicitud = get_object_or_404(
         SolicitudDinero, pk=pk, destinatario=cuenta, estado=SolicitudDinero.PENDIENTE
     )
@@ -489,7 +490,7 @@ def pagar_solicitud(request, pk):
 @login_required
 @require_POST
 def cancelar_solicitud(request, pk):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     solicitud = get_object_or_404(SolicitudDinero, pk=pk, estado=SolicitudDinero.PENDIENTE)
 
     if cuenta.pk not in (solicitud.solicitante_id, solicitud.destinatario_id):
@@ -506,7 +507,7 @@ def cancelar_solicitud(request, pk):
 @login_required
 @require_POST
 def alternar_bloqueo_tarjeta(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     cuenta.tarjeta_bloqueada = not cuenta.tarjeta_bloqueada
     cuenta.save()
     if cuenta.tarjeta_bloqueada:
@@ -518,7 +519,7 @@ def alternar_bloqueo_tarjeta(request):
 
 @login_required
 def perfil(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = PerfilForm(request.POST, request.FILES, instance=cuenta)
@@ -549,7 +550,7 @@ def cambiar_contrasena(request):
 
 @login_required
 def dolares(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     return render(request, "banca/dolares.html", {
         "cuenta": cuenta,
         "tasa_dolar": TASA_DOLAR,
@@ -558,7 +559,7 @@ def dolares(request):
 
 @login_required
 def comprar_dolares(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = DolarForm(request.POST)
@@ -589,7 +590,7 @@ def comprar_dolares(request):
 
 @login_required
 def vender_dolares(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = DolarForm(request.POST, saldo_disponible_usd=cuenta.saldo_usd)
@@ -616,7 +617,7 @@ def vender_dolares(request):
 
 @login_required
 def prestamos(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = PrestamoForm(request.POST)
@@ -659,7 +660,7 @@ def prestamos(request):
 @login_required
 @require_POST
 def pagar_cuota(request, pk):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     prestamo = get_object_or_404(Prestamo, pk=pk, cuenta=cuenta, estado=Prestamo.ACTIVO)
 
     if prestamo.monto_cuota > cuenta.saldo:
@@ -687,7 +688,7 @@ def pagar_cuota(request, pk):
 
 @login_required
 def plazos_fijos(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
 
     if request.method == "POST":
         form = PlazoFijoForm(request.POST, saldo_disponible=cuenta.saldo)
@@ -735,7 +736,7 @@ def plazos_fijos(request):
 @login_required
 @require_POST
 def rescatar_plazo_fijo(request, pk):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     plazo = get_object_or_404(PlazoFijo, pk=pk, cuenta=cuenta, estado=PlazoFijo.ACTIVO)
 
     if not plazo.esta_vencido:
@@ -761,7 +762,7 @@ def rescatar_plazo_fijo(request, pk):
 
 @login_required
 def seguros(request):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     tipos_contratados = set(cuenta.seguros.filter(activo=True).values_list("tipo", flat=True))
     catalogo = [
         {"tipo": tipo, "contratado": tipo in tipos_contratados, **datos}
@@ -778,7 +779,7 @@ def seguros(request):
 @login_required
 @require_POST
 def contratar_seguro(request, tipo):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     datos = CATALOGO_SEGUROS.get(tipo)
 
     if datos is None:
@@ -818,7 +819,7 @@ def contratar_seguro(request, tipo):
 @login_required
 @require_POST
 def cancelar_seguro(request, pk):
-    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    cuenta = obtener_o_crear_cuenta(request.user)
     seguro = get_object_or_404(Seguro, pk=pk, cuenta=cuenta, activo=True)
     seguro.activo = False
     seguro.save()

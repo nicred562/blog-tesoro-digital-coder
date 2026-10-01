@@ -358,3 +358,24 @@ def generar_cbu():
         cbu = bloque1 + bloque2
         if not Cuenta.objects.filter(cbu=cbu).exists():
             return cbu
+
+
+def obtener_o_crear_cuenta(usuario):
+    """
+    Devuelve la Cuenta del usuario. Si todavia no tiene una (por ejemplo,
+    un superusuario creado con createsuperuser, que nunca paso por el
+    formulario de registro), le crea una cuenta nueva en el momento en
+    vez de romper con un 404.
+    """
+    try:
+        return Cuenta.objects.get(usuario=usuario)
+    except Cuenta.DoesNotExist:
+        numero_tarjeta, vencimiento = generar_tarjeta()
+        return Cuenta.objects.create(
+            usuario=usuario,
+            numero_cuenta=generar_numero_cuenta(),
+            numero_tarjeta=numero_tarjeta,
+            vencimiento_tarjeta=vencimiento,
+            alias=generar_alias(),
+            cbu=generar_cbu(),
+        )
