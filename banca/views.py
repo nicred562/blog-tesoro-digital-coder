@@ -4,8 +4,9 @@ from decimal import Decimal
 
 import qrcode
 from django.contrib import messages
-from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.db import transaction
 from django.db.models import Sum
 from django.http import HttpResponse
@@ -15,10 +16,13 @@ from django.views.decorators.http import require_POST
 
 from .forms import (
     ContactoForm,
+    DolarForm,
     LoginForm,
     MontoForm,
     PagoServicioForm,
     PerfilForm,
+    PlazoFijoForm,
+    PrestamoForm,
     RecargaForm,
     RegistroForm,
     RetiroForm,
@@ -29,10 +33,17 @@ from .forms import (
     OPERADORAS_RECARGA,
 )
 from .models import (
+    CATALOGO_SEGUROS,
     Contacto,
     Cuenta,
     Movimiento,
+    PlazoFijo,
+    Prestamo,
+    Seguro,
     SolicitudDinero,
+    TASA_DOLAR,
+    TASA_INTERES_PRESTAMO,
+    TASAS_PLAZO_FIJO,
     generar_alias,
     generar_cbu,
     generar_numero_cuenta,
@@ -519,3 +530,297 @@ def perfil(request):
         form = PerfilForm(instance=cuenta)
 
     return render(request, "banca/perfil.html", {"form": form, "cuenta": cuenta})
+
+
+@login_required
+def cambiar_contrasena(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            update_session_auth_hash(request, usuario)
+            messages.success(request, "Tu contraseña se actualizó correctamente.")
+            return redirect("banca:perfil")
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, "banca/cambiar_contrasena.html", {"form": form})
+
+
+@login_required
+def dolares(request):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    return render(request, "banca/dolares.html", {
+        "cuenta": cuenta,
+        "tasa_dolar": TASA_DOLAR,
+    })
+
+
+@login_required
+def comprar_dolares(request):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+
+    if request.method == "POST":
+        form = DolarForm(request.POST)
+        if form.is_valid():
+            monto_usd = form.cleaned_data["monto_usd"]
+            costo_pesos = (monto_usd * TASA_DOLAR).quantize(Decimal("0.01"))
+
+            if costo_pesos > cuenta.saldo:
+                form.add_error(None, "No tenes saldo en pesos suficiente para esa compra.")
+            else:
+                cuenta.saldo -= costo_pesos
+                cuenta.saldo_usd += monto_usd
+                cuenta.save()
+                mov = Movimiento.objects.create(
+                    cuenta=cuenta,
+                    tipo=Movimiento.COMPRA_USD,
+                    monto=costo_pesos,
+                    saldo_posterior=cuenta.saldo,
+                    descripcion=f"Compra de u$s {monto_usd} a ${TASA_DOLAR} cada uno",
+                )
+                messages.success(request, f"Compraste u$s {monto_usd} por ${costo_pesos}.")
+                return redirect("banca:comprobante", pk=mov.pk)
+    else:
+        form = DolarForm()
+
+    return render(request, "banca/comprar_dolares.html", {"form": form, "cuenta": cuenta, "tasa_dolar": TASA_DOLAR})
+
+
+@login_required
+def vender_dolares(request):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+
+    if request.method == "POST":
+        form = DolarForm(request.POST, saldo_disponible_usd=cuenta.saldo_usd)
+        if form.is_valid():
+            monto_usd = form.cleaned_data["monto_usd"]
+            ingreso_pesos = (monto_usd * TASA_DOLAR).quantize(Decimal("0.01"))
+            cuenta.saldo_usd -= monto_usd
+            cuenta.saldo += ingreso_pesos
+            cuenta.save()
+            mov = Movimiento.objects.create(
+                cuenta=cuenta,
+                tipo=Movimiento.VENTA_USD,
+                monto=ingreso_pesos,
+                saldo_posterior=cuenta.saldo,
+                descripcion=f"Venta de u$s {monto_usd} a ${TASA_DOLAR} cada uno",
+            )
+            messages.success(request, f"Vendiste u$s {monto_usd} por ${ingreso_pesos}.")
+            return redirect("banca:comprobante", pk=mov.pk)
+    else:
+        form = DolarForm(saldo_disponible_usd=cuenta.saldo_usd)
+
+    return render(request, "banca/vender_dolares.html", {"form": form, "cuenta": cuenta, "tasa_dolar": TASA_DOLAR})
+
+
+@login_required
+def prestamos(request):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+
+    if request.method == "POST":
+        form = PrestamoForm(request.POST)
+        if form.is_valid():
+            monto = form.cleaned_data["monto_solicitado"]
+            cuotas = form.cleaned_data["cantidad_cuotas"]
+            monto_cuota = ((monto * (1 + TASA_INTERES_PRESTAMO)) / cuotas).quantize(Decimal("0.01"))
+
+            with transaction.atomic():
+                prestamo = Prestamo.objects.create(
+                    cuenta=cuenta,
+                    monto_solicitado=monto,
+                    tasa_interes=TASA_INTERES_PRESTAMO,
+                    cantidad_cuotas=cuotas,
+                    monto_cuota=monto_cuota,
+                )
+                cuenta.saldo += monto
+                cuenta.save()
+                mov = Movimiento.objects.create(
+                    cuenta=cuenta,
+                    tipo=Movimiento.PRESTAMO_ACREDITADO,
+                    monto=monto,
+                    saldo_posterior=cuenta.saldo,
+                    descripcion=f"Préstamo en {cuotas} cuotas de ${monto_cuota}",
+                )
+
+            messages.success(request, f"Te acreditamos ${monto}. Vas a pagar {cuotas} cuotas de ${monto_cuota}.")
+            return redirect("banca:comprobante", pk=mov.pk)
+    else:
+        form = PrestamoForm()
+
+    return render(request, "banca/prestamos.html", {
+        "form": form,
+        "cuenta": cuenta,
+        "prestamos": cuenta.prestamos.all(),
+        "tasa_interes_porcentaje": int(TASA_INTERES_PRESTAMO * 100),
+    })
+
+
+@login_required
+@require_POST
+def pagar_cuota(request, pk):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    prestamo = get_object_or_404(Prestamo, pk=pk, cuenta=cuenta, estado=Prestamo.ACTIVO)
+
+    if prestamo.monto_cuota > cuenta.saldo:
+        messages.error(request, "No tenes saldo suficiente para pagar esta cuota.")
+        return redirect("banca:prestamos")
+
+    with transaction.atomic():
+        cuenta.saldo -= prestamo.monto_cuota
+        cuenta.save()
+        prestamo.cuotas_pagadas += 1
+        if prestamo.cuotas_pagadas >= prestamo.cantidad_cuotas:
+            prestamo.estado = Prestamo.PAGADO
+        prestamo.save()
+        mov = Movimiento.objects.create(
+            cuenta=cuenta,
+            tipo=Movimiento.PAGO_CUOTA_PRESTAMO,
+            monto=prestamo.monto_cuota,
+            saldo_posterior=cuenta.saldo,
+            descripcion=f"Cuota {prestamo.cuotas_pagadas}/{prestamo.cantidad_cuotas}",
+        )
+
+    messages.success(request, f"Pagaste la cuota {prestamo.cuotas_pagadas} de {prestamo.cantidad_cuotas}.")
+    return redirect("banca:comprobante", pk=mov.pk)
+
+
+@login_required
+def plazos_fijos(request):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+
+    if request.method == "POST":
+        form = PlazoFijoForm(request.POST, saldo_disponible=cuenta.saldo)
+        if form.is_valid():
+            monto = form.cleaned_data["monto"]
+            dias = form.cleaned_data["dias"]
+            tasa_anual = TASAS_PLAZO_FIJO[dias]
+            monto_final = (monto * (1 + tasa_anual * dias / 365)).quantize(Decimal("0.01"))
+
+            with transaction.atomic():
+                plazo = PlazoFijo.objects.create(
+                    cuenta=cuenta,
+                    monto=monto,
+                    tasa_anual=tasa_anual,
+                    dias=dias,
+                    monto_final=monto_final,
+                )
+                cuenta.saldo -= monto
+                cuenta.save()
+                mov = Movimiento.objects.create(
+                    cuenta=cuenta,
+                    tipo=Movimiento.PLAZO_FIJO_CREADO,
+                    monto=monto,
+                    saldo_posterior=cuenta.saldo,
+                    descripcion=f"Plazo fijo a {dias} días, vence ${monto_final}",
+                )
+
+            messages.success(request, f"Depositaste ${monto} a {dias} días. Vas a recibir ${monto_final}.")
+            return redirect("banca:comprobante", pk=mov.pk)
+    else:
+        form = PlazoFijoForm(saldo_disponible=cuenta.saldo)
+
+    tasas_porcentaje = [
+        {"dias": dias, "porcentaje": int(tasa * 100)} for dias, tasa in TASAS_PLAZO_FIJO.items()
+    ]
+
+    return render(request, "banca/plazos_fijos.html", {
+        "form": form,
+        "cuenta": cuenta,
+        "plazos": cuenta.plazos_fijos.all(),
+        "tasas": tasas_porcentaje,
+    })
+
+
+@login_required
+@require_POST
+def rescatar_plazo_fijo(request, pk):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    plazo = get_object_or_404(PlazoFijo, pk=pk, cuenta=cuenta, estado=PlazoFijo.ACTIVO)
+
+    if not plazo.esta_vencido:
+        messages.error(request, f"Todavía no podés rescatarlo: vence el {plazo.fecha_vencimiento:%d/%m/%Y}.")
+        return redirect("banca:plazos_fijos")
+
+    with transaction.atomic():
+        cuenta.saldo += plazo.monto_final
+        cuenta.save()
+        plazo.estado = PlazoFijo.RESCATADO
+        plazo.save()
+        mov = Movimiento.objects.create(
+            cuenta=cuenta,
+            tipo=Movimiento.PLAZO_FIJO_RESCATADO,
+            monto=plazo.monto_final,
+            saldo_posterior=cuenta.saldo,
+            descripcion=f"Plazo fijo a {plazo.dias} días (ganancia ${plazo.ganancia})",
+        )
+
+    messages.success(request, f"Rescataste ${plazo.monto_final}.")
+    return redirect("banca:comprobante", pk=mov.pk)
+
+
+@login_required
+def seguros(request):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    tipos_contratados = set(cuenta.seguros.filter(activo=True).values_list("tipo", flat=True))
+    catalogo = [
+        {"tipo": tipo, "contratado": tipo in tipos_contratados, **datos}
+        for tipo, datos in CATALOGO_SEGUROS.items()
+    ]
+
+    return render(request, "banca/seguros.html", {
+        "cuenta": cuenta,
+        "catalogo": catalogo,
+        "contratados": cuenta.seguros.filter(activo=True),
+    })
+
+
+@login_required
+@require_POST
+def contratar_seguro(request, tipo):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    datos = CATALOGO_SEGUROS.get(tipo)
+
+    if datos is None:
+        messages.error(request, "Ese seguro no existe.")
+        return redirect("banca:seguros")
+
+    if cuenta.seguros.filter(tipo=tipo, activo=True).exists():
+        messages.info(request, "Ya tenés ese seguro contratado.")
+        return redirect("banca:seguros")
+
+    if datos["costo_mensual"] > cuenta.saldo:
+        messages.error(request, "No tenes saldo suficiente para pagar el primer mes.")
+        return redirect("banca:seguros")
+
+    with transaction.atomic():
+        Seguro.objects.create(
+            cuenta=cuenta,
+            tipo=tipo,
+            nombre=datos["nombre"],
+            costo_mensual=datos["costo_mensual"],
+        )
+        cuenta.saldo -= datos["costo_mensual"]
+        cuenta.save()
+        mov = Movimiento.objects.create(
+            cuenta=cuenta,
+            tipo=Movimiento.SEGURO_CONTRATADO,
+            monto=datos["costo_mensual"],
+            saldo_posterior=cuenta.saldo,
+            contraparte=datos["nombre"],
+            descripcion="Primer mes",
+        )
+
+    messages.success(request, f"Contrataste {datos['nombre']}.")
+    return redirect("banca:comprobante", pk=mov.pk)
+
+
+@login_required
+@require_POST
+def cancelar_seguro(request, pk):
+    cuenta = get_object_or_404(Cuenta, usuario=request.user)
+    seguro = get_object_or_404(Seguro, pk=pk, cuenta=cuenta, activo=True)
+    seguro.activo = False
+    seguro.save()
+    messages.info(request, f"Cancelaste {seguro.nombre}.")
+    return redirect("banca:seguros")

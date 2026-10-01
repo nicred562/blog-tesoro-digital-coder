@@ -939,3 +939,203 @@ table.movimientos small {
     letter-spacing: 0.03em;
     font-size: 0.9rem;
 }
+
+/* Comercio y dolares */
+
+.badge-comercio {
+    display: inline-block;
+    background: var(--color-acento);
+    color: var(--color-primario);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+    margin-left: 0.4rem;
+}
+
+.saldo-usd {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #eafaf6;
+    margin: -0.3rem 0 0.3rem;
+}
+
+/* Productos (prestamos, plazo fijo, seguros): tarjetas con estado */
+
+.lista-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+}
+
+.tarjeta-producto {
+    background: var(--superficie);
+    border-radius: 10px;
+    padding: 1.2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tarjeta-producto-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+.barra-progreso {
+    margin: 0.2rem 0;
+}
+
+.badge-estado {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.badge-estado-activo {
+    background: #e3f9f0;
+    color: var(--color-exito);
+}
+
+.badge-estado-pagado,
+.badge-estado-rescatado {
+    background: var(--superficie-2);
+    color: var(--texto-muted);
+}
+
+.badge-estado-cancelada {
+    background: #fdecea;
+    color: var(--color-error);
+}
+
+/* Seguros */
+
+.catalogo-seguros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.tarjeta-seguro {
+    background: var(--superficie);
+    border-radius: 10px;
+    padding: 1.3rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.precio-seguro {
+    font-weight: 700;
+    color: var(--texto-marca);
+    margin: 0;
+}
+
+/* Seccion "Mas que una cuenta" en la landing */
+
+.productos {
+    background: none;
+    box-shadow: none;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.productos h2 {
+    color: var(--texto-marca);
+}
+
+.productos-grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+    text-align: left;
+}
+
+.producto-tile {
+    background: var(--superficie);
+    border-radius: 10px;
+    padding: 1.3rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.producto-icono {
+    font-size: 1.8rem;
+}
+
+.producto-tile h3 {
+    margin: 0.5rem 0 0.3rem;
+    font-size: 1rem;
+    color: var(--texto-marca);
+}
+
+.producto-tile p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--texto-muted);
+}
+
+/* Sponsors */
+
+.sponsors {
+    background: none;
+    box-shadow: none;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.sponsors h2 {
+    color: var(--texto-marca);
+}
+
+.sponsors-grilla {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0 0.8rem;
+}
+
+.sponsor-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--superficie);
+    border-radius: 30px;
+    padding: 0.5rem 1.2rem 0.5rem 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+    color: var(--texto);
+    font-size: 0.9rem;
+}
+
+.sponsor-letra {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primario);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+.sponsors-nota {
+    color: var(--texto-muted);
+    font-size: 0.8rem;
+}

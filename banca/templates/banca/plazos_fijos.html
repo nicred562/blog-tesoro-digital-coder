@@ -1,0 +1,59 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Plazo fijo - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Plazo fijo</h1>
+<p class="ayuda-transferencia">
+    Tasas de ejemplo (TNA):
+    {% for t in tasas %}{{ t.dias }} días {{ t.porcentaje }}%{% if not forloop.last %} · {% endif %}{% endfor %}
+</p>
+
+<section class="formulario-angosto">
+    <h2>Crear un plazo fijo</h2>
+    <p>Saldo disponible: <strong>${{ cuenta.saldo }}</strong></p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Confirmar</button>
+    </form>
+</section>
+
+<section>
+    <h2>Tus plazos fijos</h2>
+    {% if plazos %}
+        <div class="lista-productos">
+            {% for p in plazos %}
+            <div class="tarjeta-producto">
+                <div class="tarjeta-producto-cabecera">
+                    <strong>${{ p.monto }}</strong>
+                    <span class="badge-estado badge-estado-{{ p.estado }}">{{ p.get_estado_display }}</span>
+                </div>
+                <p>{{ p.dias }} días · vence el {{ p.fecha_vencimiento|date:"d/m/Y" }}</p>
+                <p>Vas a recibir <strong>${{ p.monto_final }}</strong> (ganancia de ${{ p.ganancia }})</p>
+                {% if p.estado == 'activo' %}
+                    {% if p.esta_vencido %}
+                    <form method="post" action="{% url 'banca:rescatar_plazo_fijo' p.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="boton boton-secundario">Rescatar</button>
+                    </form>
+                    {% else %}
+                    <p class="dato-etiqueta">Todavía no se puede rescatar.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Todavía no tenés plazos fijos.</p>
+    {% endif %}
+</section>
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}

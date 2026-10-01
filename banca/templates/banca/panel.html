@@ -17,9 +17,13 @@
 
 <div class="panel-resumen">
     <section class="panel-saldo">
-        <p class="numero-cuenta">Cuenta {{ cuenta.numero_cuenta }} &middot; alias {{ cuenta.alias }}</p>
+        <p class="numero-cuenta">
+            Cuenta {{ cuenta.numero_cuenta }} &middot; alias {{ cuenta.alias }}
+            {% if cuenta.es_comercio %}<span class="badge-comercio">Comercio</span>{% endif %}
+        </p>
         <p class="numero-cuenta">CBU {{ cuenta.cbu }}</p>
         <p class="saldo">${{ cuenta.saldo }}</p>
+        {% if cuenta.saldo_usd %}<p class="saldo-usd">u$s {{ cuenta.saldo_usd }}</p>{% endif %}
         <p class="nota-rendimiento">Tu saldo gana rendimiento todos los días.</p>
         <p>Hola, {{ user.first_name|default:user.username }}. <a href="{% url 'banca:perfil' %}" class="enlace-claro">Editar perfil</a></p>
     </section>
@@ -56,6 +60,10 @@
     <a href="{% url 'banca:pagar_servicio' %}" class="acceso"><span class="acceso-icono">🧾</span>Pagar servicios</a>
     <a href="{% url 'banca:recargar_celular' %}" class="acceso"><span class="acceso-icono">📱</span>Recargar celular</a>
     <a href="{% url 'banca:contactos' %}" class="acceso"><span class="acceso-icono">👥</span>Contactos</a>
+    <a href="{% url 'banca:dolares' %}" class="acceso"><span class="acceso-icono">💵</span>Dólares</a>
+    <a href="{% url 'banca:plazos_fijos' %}" class="acceso"><span class="acceso-icono">🔒</span>Plazo fijo</a>
+    <a href="{% url 'banca:prestamos' %}" class="acceso"><span class="acceso-icono">🏷️</span>Préstamos</a>
+    <a href="{% url 'banca:seguros' %}" class="acceso"><span class="acceso-icono">🛟</span>Seguros</a>
     <a href="{% url 'banca:resumen' %}" class="acceso"><span class="acceso-icono">📊</span>Resumen</a>
     <a href="{% url 'banca:movimientos' %}" class="acceso"><span class="acceso-icono">📄</span>Movimientos</a>
 </div>

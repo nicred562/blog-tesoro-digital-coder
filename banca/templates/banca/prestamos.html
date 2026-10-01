@@ -1,0 +1,57 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Préstamos - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Préstamos</h1>
+<p class="ayuda-transferencia">
+    Aprobación al instante, sin verificación real de ingresos: es una demo. Interés fijo del
+    {{ tasa_interes_porcentaje }}% sobre el monto, sin importar el plazo elegido.
+</p>
+
+<section class="formulario-angosto">
+    <h2>Solicitar un préstamo</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Solicitar</button>
+    </form>
+</section>
+
+<section>
+    <h2>Tus préstamos</h2>
+    {% if prestamos %}
+        <div class="lista-productos">
+            {% for p in prestamos %}
+            <div class="tarjeta-producto">
+                <div class="tarjeta-producto-cabecera">
+                    <strong>${{ p.monto_solicitado }}</strong>
+                    <span class="badge-estado badge-estado-{{ p.estado }}">{{ p.get_estado_display }}</span>
+                </div>
+                <p>{{ p.cuotas_pagadas }} de {{ p.cantidad_cuotas }} cuotas pagadas · ${{ p.monto_cuota }} cada una</p>
+                {% if p.estado == 'activo' %}
+                <div class="barra-pista barra-progreso">
+                    <div class="barra-relleno" style="width: {% widthratio p.cuotas_pagadas p.cantidad_cuotas 100 %}%;"></div>
+                </div>
+                <p>Saldo pendiente: ${{ p.saldo_pendiente }}</p>
+                <form method="post" action="{% url 'banca:pagar_cuota' p.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="boton boton-secundario">Pagar próxima cuota</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Todavía no pediste ningún préstamo.</p>
+    {% endif %}
+</section>
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}

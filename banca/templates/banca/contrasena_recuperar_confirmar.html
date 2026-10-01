@@ -1,0 +1,21 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Elegir nueva contraseña - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    {% if validlink %}
+        <h1>Elegí tu nueva contraseña</h1>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {{ form.as_p }}
+            <button type="submit" class="boton">Guardar contraseña</button>
+        </form>
+    {% else %}
+        <h1>Este link ya no funciona</h1>
+        <p>Puede haber expirado o ya haberse usado. Pedí uno nuevo desde abajo.</p>
+        <a href="{% url 'banca:contrasena_recuperar' %}" class="boton">Pedir un nuevo link</a>
+    {% endif %}
+</section>
+{% endblock %}

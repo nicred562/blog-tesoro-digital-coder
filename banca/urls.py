@@ -1,4 +1,5 @@
-from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.urls import path, reverse_lazy
 
 from . import views
 
@@ -30,4 +31,47 @@ urlpatterns = [
     path("solicitudes/<int:pk>/pagar/", views.pagar_solicitud, name="pagar_solicitud"),
     path("solicitudes/<int:pk>/cancelar/", views.cancelar_solicitud, name="cancelar_solicitud"),
     path("tarjeta/bloqueo/", views.alternar_bloqueo_tarjeta, name="alternar_bloqueo_tarjeta"),
+    path("dolares/", views.dolares, name="dolares"),
+    path("dolares/comprar/", views.comprar_dolares, name="comprar_dolares"),
+    path("dolares/vender/", views.vender_dolares, name="vender_dolares"),
+    path("prestamos/", views.prestamos, name="prestamos"),
+    path("prestamos/<int:pk>/pagar-cuota/", views.pagar_cuota, name="pagar_cuota"),
+    path("plazos-fijos/", views.plazos_fijos, name="plazos_fijos"),
+    path("plazos-fijos/<int:pk>/rescatar/", views.rescatar_plazo_fijo, name="rescatar_plazo_fijo"),
+    path("seguros/", views.seguros, name="seguros"),
+    path("seguros/<str:tipo>/contratar/", views.contratar_seguro, name="contratar_seguro"),
+    path("seguros/<int:pk>/cancelar/", views.cancelar_seguro, name="cancelar_seguro"),
+    path("contrasena/cambiar/", views.cambiar_contrasena, name="cambiar_contrasena"),
+
+    # Recuperar contraseña (usuario deslogueado). Usamos las vistas que ya
+    # trae Django porque manejan los tokens de forma segura: no tiene
+    # sentido reinventar esa parte.
+    path(
+        "contrasena/recuperar/",
+        auth_views.PasswordResetView.as_view(
+            template_name="banca/contrasena_recuperar.html",
+            email_template_name="banca/email_recuperar_contrasena.txt",
+            subject_template_name="banca/email_recuperar_contrasena_asunto.txt",
+            success_url=reverse_lazy("banca:contrasena_recuperar_enviado"),
+        ),
+        name="contrasena_recuperar",
+    ),
+    path(
+        "contrasena/recuperar/enviado/",
+        auth_views.PasswordResetDoneView.as_view(template_name="banca/contrasena_recuperar_enviado.html"),
+        name="contrasena_recuperar_enviado",
+    ),
+    path(
+        "contrasena/recuperar/confirmar/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="banca/contrasena_recuperar_confirmar.html",
+            success_url=reverse_lazy("banca:contrasena_recuperar_listo"),
+        ),
+        name="contrasena_recuperar_confirmar",
+    ),
+    path(
+        "contrasena/recuperar/listo/",
+        auth_views.PasswordResetCompleteView.as_view(template_name="banca/contrasena_recuperar_listo.html"),
+        name="contrasena_recuperar_listo",
+    ),
 ]

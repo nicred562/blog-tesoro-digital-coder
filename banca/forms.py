@@ -146,11 +146,74 @@ class ContactoForm(DestinoFormBase):
 class PerfilForm(forms.ModelForm):
     class Meta:
         model = Cuenta
-        fields = ["foto", "alias"]
+        fields = ["foto", "alias", "es_comercio", "nombre_comercio"]
         labels = {
             "foto": "Foto de perfil",
             "alias": "Alias para recibir transferencias",
+            "es_comercio": "Es una cuenta de comercio",
+            "nombre_comercio": "Nombre del comercio",
         }
         help_texts = {
             "alias": "Formato palabra.palabra.palabra, todo en minusculas.",
+            "es_comercio": "Mostrá tu negocio en el QR para cobrar.",
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("es_comercio") and not cleaned.get("nombre_comercio"):
+            self.add_error("nombre_comercio", "Si activás cuenta de comercio, necesitás ponerle un nombre.")
+        return cleaned
+
+
+class DolarForm(forms.Form):
+    monto_usd = forms.DecimalField(
+        label="Cantidad de dólares",
+        max_digits=12,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+    )
+
+    def __init__(self, *args, saldo_disponible_usd=None, **kwargs):
+        self.saldo_disponible_usd = saldo_disponible_usd
+        super().__init__(*args, **kwargs)
+
+    def clean_monto_usd(self):
+        monto = self.cleaned_data["monto_usd"]
+        if self.saldo_disponible_usd is not None and monto > self.saldo_disponible_usd:
+            raise forms.ValidationError("No tenes esa cantidad de dólares para vender.")
+        return monto
+
+
+class PrestamoForm(forms.Form):
+    OPCIONES_CUOTAS = [(3, "3 cuotas"), (6, "6 cuotas"), (12, "12 cuotas"), (24, "24 cuotas")]
+
+    monto_solicitado = forms.DecimalField(
+        label="Monto a solicitar",
+        max_digits=12,
+        decimal_places=2,
+        min_value=Decimal("1000.00"),
+        max_value=Decimal("10000000.00"),
+    )
+    cantidad_cuotas = forms.TypedChoiceField(label="Cuotas", choices=OPCIONES_CUOTAS, coerce=int)
+
+
+class PlazoFijoForm(forms.Form):
+    OPCIONES_DIAS = [(30, "30 días"), (60, "60 días"), (90, "90 días"), (180, "180 días"), (365, "365 días")]
+
+    monto = forms.DecimalField(
+        label="Monto a invertir",
+        max_digits=12,
+        decimal_places=2,
+        min_value=Decimal("100.00"),
+    )
+    dias = forms.TypedChoiceField(label="Plazo", choices=OPCIONES_DIAS, coerce=int)
+
+    def __init__(self, *args, saldo_disponible=None, **kwargs):
+        self.saldo_disponible = saldo_disponible
+        super().__init__(*args, **kwargs)
+
+    def clean_monto(self):
+        monto = self.cleaned_data["monto"]
+        if self.saldo_disponible is not None and monto > self.saldo_disponible:
+            raise forms.ValidationError("No tenes saldo suficiente para ese plazo fijo.")
+        return monto

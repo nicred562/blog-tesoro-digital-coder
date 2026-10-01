@@ -1,0 +1,55 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Seguros - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Seguros</h1>
+<p class="ayuda-transferencia">Catálogo de ejemplo. Contratar cobra el primer mes al instante; no hay cobertura real.</p>
+
+<div class="catalogo-seguros">
+    {% for item in catalogo %}
+    <div class="tarjeta-seguro">
+        <span class="tarjeta-post-icono">{{ item.icono }}</span>
+        <h3>{{ item.nombre }}</h3>
+        <p class="precio-seguro">${{ item.costo_mensual }} / mes</p>
+        {% if item.contratado %}
+            <span class="badge-estado badge-estado-activo">Contratado</span>
+        {% else %}
+            <form method="post" action="{% url 'banca:contratar_seguro' item.tipo %}">
+                {% csrf_token %}
+                <button type="submit" class="boton boton-secundario">Contratar</button>
+            </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<section>
+    <h2>Tus seguros activos</h2>
+    {% if contratados %}
+        <ul class="lista-contactos">
+            {% for seguro in contratados %}
+            <li>
+                <div>
+                    <strong>{{ seguro.nombre }}</strong>
+                    <small>${{ seguro.costo_mensual }} / mes · desde {{ seguro.fecha_contratacion|date:"d/m/Y" }}</small>
+                </div>
+                <form method="post" action="{% url 'banca:cancelar_seguro' seguro.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="enlace-boton-oscuro">Cancelar</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tenés seguros contratados.</p>
+    {% endif %}
+</section>
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}

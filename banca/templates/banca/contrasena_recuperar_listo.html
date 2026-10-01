@@ -1,0 +1,11 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Contraseña actualizada - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto" style="text-align: center;">
+    <h1>Listo, cambiaste tu contraseña</h1>
+    <p>Ya podés ingresar con tu usuario y la contraseña nueva.</p>
+    <a href="{% url 'banca:ingresar' %}" class="boton">Ingresar</a>
+</section>
+{% endblock %}

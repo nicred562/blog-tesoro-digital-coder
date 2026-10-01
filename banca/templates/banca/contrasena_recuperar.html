@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Recuperar contraseña - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>¿Olvidaste tu contraseña?</h1>
+    <p>Poné el email con el que te registraste y te mandamos un link para elegir una nueva.</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Enviar instrucciones</button>
+    </form>
+    <p><a href="{% url 'banca:ingresar' %}">Volver a ingresar</a></p>
+</section>
+{% endblock %}

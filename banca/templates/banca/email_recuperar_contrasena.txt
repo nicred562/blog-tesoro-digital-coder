@@ -1,0 +1,11 @@
+Hola {{ user.get_full_name|default:user.username }},
+
+Alguien (ojalá vos) pidió restablecer la contraseña de tu cuenta en Tesoro Digital.
+
+Entrá al siguiente link para elegir una contraseña nueva:
+
+{{ protocol }}://{{ domain }}{% url 'banca:contrasena_recuperar_confirmar' uidb64=uid token=token %}
+
+Si no fuiste vos, podés ignorar este mensaje: tu contraseña actual sigue funcionando.
+
+Tesoro Digital (proyecto educativo, no es un banco real).

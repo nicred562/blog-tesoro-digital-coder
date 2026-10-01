@@ -10,6 +10,9 @@
 {% block content %}
 <section class="qr-seccion">
     <h1>Cobrar con QR</h1>
+    {% if cuenta.es_comercio %}
+        <p class="badge-comercio">{{ cuenta.nombre_comercio }}</p>
+    {% endif %}
     <p>Quien escanee este código te puede transferir a vos, a la cuenta con alias <strong>{{ cuenta.alias }}</strong>.</p>
 
     <form method="get" class="form-qr">

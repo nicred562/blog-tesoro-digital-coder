@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Comprar dólares - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Comprar dólares</h1>
+    <p>Cotización de ejemplo: <strong>${{ tasa_dolar }}</strong> por dólar. Saldo en pesos: <strong>${{ cuenta.saldo }}</strong></p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Confirmar compra</button>
+    </form>
+    <p><a href="{% url 'banca:dolares' %}">Volver a dólares</a></p>
+</section>
+{% endblock %}

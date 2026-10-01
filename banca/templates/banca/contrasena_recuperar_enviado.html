@@ -1,0 +1,15 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Revisá tu email - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto" style="text-align: center;">
+    <h1>Revisá tu email</h1>
+    <p>
+        Si ese email está registrado, te mandamos un link para elegir una contraseña nueva.
+        Como esto es una demo, el "email" se imprime en la terminal donde corre el servidor
+        en vez de llegar a una bandeja de entrada real.
+    </p>
+    <p><a href="{% url 'banca:ingresar' %}" class="boton">Volver a ingresar</a></p>
+</section>
+{% endblock %}

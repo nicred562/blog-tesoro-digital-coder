@@ -1,0 +1,30 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block titulo %}Dólares - Tesoro Digital{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'banca/css/banca.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Dólares</h1>
+
+<div class="panel-saldo panel-saldo-usd">
+    <p class="numero-cuenta">Cotización de ejemplo: $ {{ tasa_dolar }} por dólar</p>
+    <p class="saldo">u$s {{ cuenta.saldo_usd }}</p>
+    <p>Saldo en pesos disponible: ${{ cuenta.saldo }}</p>
+</div>
+
+<div class="acciones-panel">
+    <a href="{% url 'banca:comprar_dolares' %}" class="boton">Comprar dólares</a>
+    <a href="{% url 'banca:vender_dolares' %}" class="boton boton-secundario">Vender dólares</a>
+</div>
+
+<p class="ayuda-transferencia">
+    La cotización es fija y de ejemplo: no representa el valor real del dólar.
+    Comprar y vender dólares acá no mueve plata de verdad.
+</p>
+
+<p><a href="{% url 'banca:panel' %}">Volver a mi cuenta</a></p>
+{% endblock %}

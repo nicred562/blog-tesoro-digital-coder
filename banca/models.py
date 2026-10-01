@@ -16,6 +16,27 @@ validador_alias = RegexValidator(
 # Rendimiento diario ficticio que gana la plata parada en la cuenta.
 TASA_RENDIMIENTO_DIARIA = Decimal("0.0008")
 
+# Cotizacion de ejemplo del dolar (fija, no representa un valor de mercado real).
+TASA_DOLAR = Decimal("1000.00")
+
+# Interes fijo que se le suma a cualquier prestamo, sea cual sea el plazo.
+TASA_INTERES_PRESTAMO = Decimal("0.15")
+
+# Tasas anuales de ejemplo para los plazos fijos, segun los dias elegidos.
+TASAS_PLAZO_FIJO = {
+    30: Decimal("0.30"),
+    60: Decimal("0.33"),
+    90: Decimal("0.36"),
+    180: Decimal("0.40"),
+    365: Decimal("0.45"),
+}
+
+CATALOGO_SEGUROS = {
+    "celular": {"nombre": "Seguro de celular", "costo_mensual": Decimal("1500.00"), "icono": "📱"},
+    "hogar": {"nombre": "Seguro de hogar", "costo_mensual": Decimal("3500.00"), "icono": "🏠"},
+    "vida": {"nombre": "Seguro de vida", "costo_mensual": Decimal("2200.00"), "icono": "❤️"},
+}
+
 
 class Cuenta(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cuenta")
@@ -28,6 +49,9 @@ class Cuenta(models.Model):
     tarjeta_bloqueada = models.BooleanField(default=False)
     foto = models.ImageField(upload_to="perfiles/", blank=True, null=True)
     ultimo_rendimiento = models.DateField(null=True, blank=True)
+    saldo_usd = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    es_comercio = models.BooleanField(default=False)
+    nombre_comercio = models.CharField(max_length=100, blank=True)
     creada = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -85,6 +109,13 @@ class Movimiento(models.Model):
     PAGO_SERVICIO = "pago_servicio"
     RECARGA_CELULAR = "recarga_celular"
     RENDIMIENTO = "rendimiento"
+    COMPRA_USD = "compra_usd"
+    VENTA_USD = "venta_usd"
+    PRESTAMO_ACREDITADO = "prestamo_acreditado"
+    PAGO_CUOTA_PRESTAMO = "pago_cuota_prestamo"
+    PLAZO_FIJO_CREADO = "plazo_fijo_creado"
+    PLAZO_FIJO_RESCATADO = "plazo_fijo_rescatado"
+    SEGURO_CONTRATADO = "seguro_contratado"
     TIPO_CHOICES = [
         (DEPOSITO, "Depósito"),
         (EXTRACCION, "Extracción"),
@@ -93,8 +124,15 @@ class Movimiento(models.Model):
         (PAGO_SERVICIO, "Pago de servicio"),
         (RECARGA_CELULAR, "Recarga de celular"),
         (RENDIMIENTO, "Rendimiento"),
+        (COMPRA_USD, "Compra de dólares"),
+        (VENTA_USD, "Venta de dólares"),
+        (PRESTAMO_ACREDITADO, "Préstamo acreditado"),
+        (PAGO_CUOTA_PRESTAMO, "Pago de cuota de préstamo"),
+        (PLAZO_FIJO_CREADO, "Plazo fijo"),
+        (PLAZO_FIJO_RESCATADO, "Rescate de plazo fijo"),
+        (SEGURO_CONTRATADO, "Seguro contratado"),
     ]
-    TIPOS_INGRESO = (DEPOSITO, TRANSFERENCIA_RECIBIDA, RENDIMIENTO)
+    TIPOS_INGRESO = (DEPOSITO, TRANSFERENCIA_RECIBIDA, RENDIMIENTO, VENTA_USD, PRESTAMO_ACREDITADO, PLAZO_FIJO_RESCATADO)
 
     cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name="movimientos")
     tipo = models.CharField(max_length=24, choices=TIPO_CHOICES)
@@ -166,6 +204,94 @@ class SolicitudDinero(models.Model):
 
     def __str__(self):
         return f"{self.solicitante.alias} le pide ${self.monto} a {self.destinatario.alias}"
+
+
+class Prestamo(models.Model):
+    ACTIVO = "activo"
+    PAGADO = "pagado"
+    ESTADO_CHOICES = [
+        (ACTIVO, "Activo"),
+        (PAGADO, "Pagado"),
+    ]
+
+    cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name="prestamos")
+    monto_solicitado = models.DecimalField(max_digits=12, decimal_places=2)
+    tasa_interes = models.DecimalField(max_digits=4, decimal_places=2, default=TASA_INTERES_PRESTAMO)
+    cantidad_cuotas = models.PositiveSmallIntegerField()
+    monto_cuota = models.DecimalField(max_digits=12, decimal_places=2)
+    cuotas_pagadas = models.PositiveSmallIntegerField(default=0)
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default=ACTIVO)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-creado"]
+
+    def __str__(self):
+        return f"Préstamo de ${self.monto_solicitado} para {self.cuenta.numero_cuenta}"
+
+    @property
+    def monto_total_a_pagar(self):
+        return self.monto_cuota * self.cantidad_cuotas
+
+    @property
+    def cuotas_restantes(self):
+        return self.cantidad_cuotas - self.cuotas_pagadas
+
+    @property
+    def saldo_pendiente(self):
+        return self.monto_cuota * self.cuotas_restantes
+
+
+class PlazoFijo(models.Model):
+    ACTIVO = "activo"
+    RESCATADO = "rescatado"
+    ESTADO_CHOICES = [
+        (ACTIVO, "Activo"),
+        (RESCATADO, "Rescatado"),
+    ]
+
+    cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name="plazos_fijos")
+    monto = models.DecimalField(max_digits=12, decimal_places=2)
+    tasa_anual = models.DecimalField(max_digits=4, decimal_places=2)
+    dias = models.PositiveSmallIntegerField()
+    monto_final = models.DecimalField(max_digits=12, decimal_places=2)
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default=ACTIVO)
+    fecha_inicio = models.DateField(auto_now_add=True)
+    fecha_vencimiento = models.DateField()
+
+    class Meta:
+        ordering = ["-fecha_inicio"]
+
+    def __str__(self):
+        return f"Plazo fijo de ${self.monto} a {self.dias} días"
+
+    @property
+    def esta_vencido(self):
+        return timezone.localdate() >= self.fecha_vencimiento
+
+    @property
+    def ganancia(self):
+        return self.monto_final - self.monto
+
+    def save(self, *args, **kwargs):
+        if not self.fecha_vencimiento:
+            self.fecha_vencimiento = timezone.localdate() + timedelta(days=self.dias)
+        super().save(*args, **kwargs)
+
+
+class Seguro(models.Model):
+    cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name="seguros")
+    tipo = models.CharField(max_length=20)
+    nombre = models.CharField(max_length=100)
+    costo_mensual = models.DecimalField(max_digits=10, decimal_places=2)
+    activo = models.BooleanField(default=True)
+    fecha_contratacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-fecha_contratacion"]
+
+    def __str__(self):
+        return f"{self.nombre} de {self.cuenta.numero_cuenta}"
 
 
 def resolver_cuenta(valor):
