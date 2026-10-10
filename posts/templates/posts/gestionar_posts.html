@@ -1,0 +1,38 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Gestionar posts - Tesoro Digital{% endblock %}
+
+{% block content %}
+<div class="lista-posts-encabezado">
+    <h1>Gestionar posts</h1>
+    <a href="{% url 'crear_post' %}" class="boton">+ Nueva nota</a>
+</div>
+<p class="bajada-lista">Acá se ven todos los posts, sin importar el estado.</p>
+
+{% if posts %}
+<table class="tabla-gestion">
+    <thead>
+        <tr><th>Título</th><th>Autor</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+        {% for post in posts %}
+        <tr>
+            <td>{{ post.icono }} {{ post.titulo }}</td>
+            <td>{{ post.autor }}</td>
+            <td><span class="badge-estado-post badge-estado-post-{{ post.estado }}">{{ post.get_estado_display }}</span></td>
+            <td>{{ post.fecha_creacion|date:"d/m/Y" }}</td>
+            <td class="tabla-gestion-acciones">
+                {% if post.estado == 'publicado' %}
+                    <a href="{% url 'detalle_post' post.slug %}">Ver</a>
+                {% endif %}
+                <a href="{% url 'editar_post' post.slug %}">Editar</a>
+                <a href="{% url 'eliminar_post' post.slug %}" class="enlace-peligro">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Todavía no hay ningún post cargado.</p>
+{% endif %}
+{% endblock %}

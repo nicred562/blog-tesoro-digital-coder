@@ -72,16 +72,42 @@ python manage.py runserver
 Abrir en el navegador:
 
 - http://127.0.0.1:8000/ → página de inicio del blog
-- http://127.0.0.1:8000/notas/ → listado de notas (cargadas desde el panel admin)
+- http://127.0.0.1:8000/notas/ → listado de notas publicadas
+- http://127.0.0.1:8000/notas/crear/ → crear una nota nueva (con imagen opcional)
+- http://127.0.0.1:8000/notas/gestionar/ → listado con **todos** los posts (cualquier estado), con links para editar/eliminar
 - http://127.0.0.1:8000/acerca/ → página "Acerca de"
-- http://127.0.0.1:8000/ayuda/ y http://127.0.0.1:8000/terminos/
-- http://127.0.0.1:8000/admin/ → panel de administración, para cargar/editar posts (usá el usuario que creaste con `createsuperuser`)
+- http://127.0.0.1:8000/ayuda/, http://127.0.0.1:8000/terminos/ y http://127.0.0.1:8000/contacto/
+- http://127.0.0.1:8000/admin/ → panel de administración (usá el usuario que creaste con `createsuperuser`)
 - http://127.0.0.1:8000/banca/ → landing de la banca online (registro, login, cuentas, etc.)
 
 ## Aplicaciones
 
-- `posts`: el blog. El modelo `Post` (título, contenido, autor, fecha de creación y estado: borrador/publicado/archivado) se administra desde `/admin/`. La página de notas solo muestra los posts con estado "publicado", consultados con el ORM (`Post.objects.filter(estado="publicado")`).
+- `posts`: el blog, con CRUD completo de publicaciones. El modelo `Post` tiene título, contenido, autor, fecha de creación, estado (borrador/publicado/archivado) e **imagen opcional**. Se puede crear, ver, editar y borrar posts tanto desde `/admin/` como desde el propio sitio (`/notas/crear/`, `/notas/<slug>/editar/`, `/notas/<slug>/eliminar/`). El listado público (`/notas/`) solo muestra los posts con estado "publicado" (`Post.objects.filter(estado="publicado")`); el listado de gestión (`/notas/gestionar/`) muestra todos, para poder editar un borrador antes de publicarlo. Este checkpoint no tiene login ni permisos: cualquiera puede crear, editar o borrar posts desde el sitio.
 - `banca`: demo de banca online (agregado extra, fuera de lo que pide el checkpoint de `posts`). Usa modelos y base de datos: cuentas con alias/CBU/tarjeta virtual, login en dos pasos, depósitos, retiros, transferencias, pago de servicios, recarga de celular, contactos, solicitudes de dinero, QR para cobrar y resumen de gastos.
+
+## CRUD de posts (Preentrega 10)
+
+Las operaciones disponibles:
+
+| Operación | Ruta | Descripción |
+|---|---|---|
+| Crear | `/notas/crear/` | Formulario (`PostForm`, un `ModelForm`) con título, resumen, contenido, autor, estado, ícono e imagen. |
+| Leer (listado público) | `/notas/` | Solo posts publicados. |
+| Leer (listado completo) | `/notas/gestionar/` | Todos los posts, cualquier estado. |
+| Leer (detalle) | `/notas/<slug>/` | Muestra título, contenido, autor, estado e imagen (si tiene). Solo posts publicados. |
+| Actualizar | `/notas/<slug>/editar/` | Mismo formulario que crear, precargado. Si no subís una imagen nueva, se conserva la que ya tenía. |
+| Borrar | `/notas/<slug>/eliminar/` | Pide confirmación antes de borrar (GET muestra la confirmación, el borrado real es por POST). |
+
+### Cómo se maneja la imagen
+
+- El modelo tiene `imagen = models.ImageField(upload_to='posts/', null=True, blank=True)` — es opcional.
+- Se necesita **Pillow** para que `ImageField` funcione (`pip install Pillow`, ya en `requirements.txt`).
+- `MEDIA_URL` y `MEDIA_ROOT` están definidos en `settings.py`, y `blog_project/urls.py` sirve la carpeta `media/` mientras `DEBUG=True`.
+- El formulario (`post_form.html`) tiene `enctype="multipart/form-data"`, imprescindible para que el archivo viaje al servidor.
+- Las vistas de crear/editar instancian el formulario con `PostForm(request.POST, request.FILES)` (o `request.FILES, instance=post` al editar), para procesar tanto los campos de texto como el archivo.
+- Si un post no tiene imagen, el template muestra su ícono (emoji) en vez de romper.
+
+**Para probarlo:** entrá a `/notas/crear/`, completá el formulario y subí una imagen (cualquier `.jpg`/`.png`). Guardá como "Publicado" y mirá cómo aparece en `/notas/` y en el detalle del post. Las imágenes quedan en `media/posts/` (esa carpeta no se sube a GitHub, está en `.gitignore`).
 
 ## Estructura del proyecto Django
 
@@ -92,12 +118,15 @@ blog_consola/
 ├── .gitignore
 ├── blog_project/          (configuración del proyecto Django)
 ├── posts/                 (app del blog)
-│   ├── models.py          (modelo Post)
+│   ├── models.py          (modelo Post, con imagen)
+│   ├── forms.py           (PostForm, un ModelForm)
 │   ├── admin.py           (PostAdmin: columnas de titulo, autor, estado y fecha)
 │   ├── urls.py
-│   ├── views.py
+│   ├── views.py           (listar, detalle, crear, editar, eliminar, gestionar)
 │   ├── migrations/
-│   ├── templates/posts/   (base.html, inicio.html, acerca.html, lista_posts.html, detalle_post.html, ayuda.html, terminos.html)
+│   ├── templates/posts/   (base.html, inicio.html, acerca.html, lista_posts.html,
+│   │                        detalle_post.html, post_form.html, post_confirm_delete.html,
+│   │                        gestionar_posts.html, ayuda.html, terminos.html, contacto.html)
 │   └── static/posts/css/  (estilos.css)
 └── banca/                 (app de banca online, con modelos y base de datos)
     ├── models.py, forms.py, views.py, urls.py

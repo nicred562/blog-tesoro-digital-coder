@@ -318,6 +318,104 @@ body {
     border-radius: 20px;
 }
 
+/* Imagenes de posts */
+
+.tarjeta-post-imagen {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.post-detalle-imagen {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.post-form-imagen-actual {
+    max-width: 220px;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.post-detalle-acciones {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--borde);
+}
+
+/* Listado y gestion de posts (CRUD) */
+
+.lista-posts-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lista-posts-acciones {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.tabla-gestion {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--superficie);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-gestion th,
+.tabla-gestion td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--borde);
+    font-size: 0.9rem;
+}
+
+.tabla-gestion th {
+    background-color: var(--superficie-2);
+}
+
+.tabla-gestion-acciones {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.badge-estado-post {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.badge-estado-post-publicado {
+    background: #e3f9f0;
+    color: var(--color-exito);
+}
+
+.badge-estado-post-borrador {
+    background: var(--superficie-2);
+    color: var(--texto-muted);
+}
+
+.badge-estado-post-archivado {
+    background: #fdecea;
+    color: var(--color-error);
+}
+
 .post-detalle-cuerpo {
     line-height: 1.7;
 }
@@ -439,6 +537,27 @@ section {
 
 .boton-secundario:hover {
     background-color: var(--superficie-2);
+}
+
+.boton-peligro {
+    display: inline-block;
+    background-color: var(--color-error);
+    color: #fff;
+    padding: 0.7rem 1.4rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.boton-peligro:hover {
+    background-color: #7f201a;
+}
+
+.enlace-peligro {
+    color: var(--color-error);
 }
 
 /* Mensajes (django.contrib.messages) */

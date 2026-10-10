@@ -1,0 +1,15 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Eliminar post - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto" style="text-align: center;">
+    <h1>¿Eliminar este post?</h1>
+    <p>Vas a borrar <strong>"{{ post.titulo }}"</strong>. Esta acción no se puede deshacer.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="boton-peligro">Sí, eliminar</button>
+        <a href="{% url 'gestionar_posts' %}" class="boton boton-secundario">Cancelar</a>
+    </form>
+</section>
+{% endblock %}

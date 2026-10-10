@@ -5,14 +5,25 @@
 {% block content %}
 <article class="post-detalle">
     <p><a href="{% url 'lista_posts' %}">← Volver a las notas</a></p>
-    <span class="tarjeta-post-icono">{{ post.icono }}</span>
+
+    {% if post.imagen %}
+        <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="post-detalle-imagen">
+    {% else %}
+        <span class="tarjeta-post-icono">{{ post.icono }}</span>
+    {% endif %}
+
     <h1>{{ post.titulo }}</h1>
     <div class="post-detalle-meta">
-        <span>{{ post.autor }}</span>
+        <span>{{ post.autor }} &middot; {{ post.get_estado_display }}</span>
         <span>{{ post.fecha_creacion|date:"d/m/Y" }}</span>
     </div>
     <div class="post-detalle-cuerpo">
         {{ post.contenido|linebreaks }}
+    </div>
+
+    <div class="post-detalle-acciones">
+        <a href="{% url 'editar_post' post.slug %}" class="boton boton-secundario">Editar</a>
+        <a href="{% url 'eliminar_post' post.slug %}" class="boton-peligro">Eliminar</a>
     </div>
 </article>
 {% endblock %}

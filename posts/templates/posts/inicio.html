@@ -20,7 +20,11 @@
     <div class="grilla-posts">
         {% for post in posts_destacados %}
         <a href="{% url 'detalle_post' post.slug %}" class="tarjeta-post">
-            <span class="tarjeta-post-icono">{{ post.icono }}</span>
+            {% if post.imagen %}
+                <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="tarjeta-post-imagen">
+            {% else %}
+                <span class="tarjeta-post-icono">{{ post.icono }}</span>
+            {% endif %}
             <h2>{{ post.titulo }}</h2>
             <p>{{ post.resumen|default:post.contenido|truncatewords:20 }}</p>
             <div class="tarjeta-post-meta">

@@ -4,13 +4,25 @@
 {% block meta_descripcion %}Todas las notas del blog de Tesoro Digital: ahorro, tarjetas, seguridad y transferencias.{% endblock %}
 
 {% block content %}
-<h1>Notas del blog</h1>
-<p class="bajada-lista">Guías, novedades y consejos para sacarle provecho a tu cuenta.</p>
+<div class="lista-posts-encabezado">
+    <div>
+        <h1>Notas del blog</h1>
+        <p class="bajada-lista">Guías, novedades y consejos para sacarle provecho a tu cuenta.</p>
+    </div>
+    <div class="lista-posts-acciones">
+        <a href="{% url 'crear_post' %}" class="boton">+ Nueva nota</a>
+        <a href="{% url 'gestionar_posts' %}" class="boton boton-secundario">Gestionar posts</a>
+    </div>
+</div>
 
 <div class="grilla-posts">
     {% for post in posts %}
     <a href="{% url 'detalle_post' post.slug %}" class="tarjeta-post">
-        <span class="tarjeta-post-icono">{{ post.icono }}</span>
+        {% if post.imagen %}
+            <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="tarjeta-post-imagen">
+        {% else %}
+            <span class="tarjeta-post-icono">{{ post.icono }}</span>
+        {% endif %}
         <h2>{{ post.titulo }}</h2>
         <p>{{ post.resumen|default:post.contenido|truncatewords:25 }}</p>
         <div class="tarjeta-post-meta">

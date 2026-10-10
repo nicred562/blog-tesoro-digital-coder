@@ -1,0 +1,22 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}{{ titulo_pagina }} - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>{{ titulo_pagina }}</h1>
+
+    {% if post.imagen %}
+        <p>Imagen actual:</p>
+        <img src="{{ post.imagen.url }}" alt="{{ post.titulo }}" class="post-form-imagen-actual">
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Guardar</button>
+    </form>
+    <p><a href="{% url 'gestionar_posts' %}">Cancelar y volver al listado</a></p>
+</section>
+{% endblock %}
