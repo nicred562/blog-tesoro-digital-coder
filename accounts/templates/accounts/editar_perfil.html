@@ -1,0 +1,27 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Editar perfil - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Editar perfil</h1>
+
+    {% if form_perfil.instance.avatar %}
+        <img src="{{ form_perfil.instance.avatar.url }}" alt="Avatar actual" class="post-form-imagen-actual">
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <h2>Datos del usuario</h2>
+        {{ form_usuario.non_field_errors }}
+        {{ form_usuario.as_p }}
+
+        <h2>Perfil</h2>
+        {{ form_perfil.non_field_errors }}
+        {{ form_perfil.as_p }}
+
+        <button type="submit" class="boton">Guardar cambios</button>
+    </form>
+    <p><a href="{% url 'perfil' %}">Cancelar y volver a mi perfil</a></p>
+</section>
+{% endblock %}

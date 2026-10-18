@@ -4,10 +4,11 @@ Proyecto base del blog web de **Tesoro Digital**, un banco digital. El blog va a
 
 ## Descripción
 
-Proyecto Django (`blog_project`) con dos apps:
+Proyecto Django (`blog_project`) con tres apps:
 
-- `posts`: el blog en sí (notas, ayuda, términos). Los posts son un modelo (`Post`) gestionado desde el panel de administración de Django, con base de datos SQLite.
-- `banca`: una demo de banca online (cuentas, depósitos, retiros, transferencias, tarjeta virtual, etc.), también con modelos y base de datos SQLite. Es un agregado aparte, no forma parte de lo que pide el checkpoint de `posts`.
+- `posts`: el blog en sí (notas, ayuda, términos). Los posts son un modelo (`Post`) con CRUD completo desde el sitio y desde `/admin/`, con base de datos SQLite.
+- `accounts`: registro, login, logout y perfil de usuario (biografía + avatar) para quienes escriben en el blog. Protege crear/editar/borrar posts.
+- `banca`: una demo de banca online (cuentas, depósitos, retiros, transferencias, tarjeta virtual, etc.), también con modelos y base de datos SQLite. Es un agregado aparte, no forma parte de lo que piden los checkpoints de `posts`/`accounts`, y tiene su **propio** sistema de login independiente (no te confundas: `/login/` es para escribir en el blog, `/banca/ingresar/` es para la cuenta bancaria ficticia).
 
 Idioma `es-ar`, zona horaria `America/Argentina/Buenos_Aires`.
 
@@ -72,18 +73,33 @@ python manage.py runserver
 Abrir en el navegador:
 
 - http://127.0.0.1:8000/ → página de inicio del blog
-- http://127.0.0.1:8000/notas/ → listado de notas publicadas
-- http://127.0.0.1:8000/notas/crear/ → crear una nota nueva (con imagen opcional)
-- http://127.0.0.1:8000/notas/gestionar/ → listado con **todos** los posts (cualquier estado), con links para editar/eliminar
+- http://127.0.0.1:8000/notas/ → listado de notas publicadas (público)
+- http://127.0.0.1:8000/registro/ → crear una cuenta de autor
+- http://127.0.0.1:8000/login/ → iniciar sesión en el blog
+- http://127.0.0.1:8000/perfil/ → tu perfil (requiere login)
+- http://127.0.0.1:8000/notas/crear/ → crear una nota nueva, con imagen opcional (requiere login)
+- http://127.0.0.1:8000/notas/gestionar/ → listado con **todos** los posts, cualquier estado (requiere login)
 - http://127.0.0.1:8000/acerca/ → página "Acerca de"
 - http://127.0.0.1:8000/ayuda/, http://127.0.0.1:8000/terminos/ y http://127.0.0.1:8000/contacto/
 - http://127.0.0.1:8000/admin/ → panel de administración (usá el usuario que creaste con `createsuperuser`)
-- http://127.0.0.1:8000/banca/ → landing de la banca online (registro, login, cuentas, etc.)
+- http://127.0.0.1:8000/banca/ → landing de la banca online (login propio, independiente del de arriba)
 
 ## Aplicaciones
 
-- `posts`: el blog, con CRUD completo de publicaciones. El modelo `Post` tiene título, contenido, autor, fecha de creación, estado (borrador/publicado/archivado) e **imagen opcional**. Se puede crear, ver, editar y borrar posts tanto desde `/admin/` como desde el propio sitio (`/notas/crear/`, `/notas/<slug>/editar/`, `/notas/<slug>/eliminar/`). El listado público (`/notas/`) solo muestra los posts con estado "publicado" (`Post.objects.filter(estado="publicado")`); el listado de gestión (`/notas/gestionar/`) muestra todos, para poder editar un borrador antes de publicarlo. Este checkpoint no tiene login ni permisos: cualquiera puede crear, editar o borrar posts desde el sitio.
-- `banca`: demo de banca online (agregado extra, fuera de lo que pide el checkpoint de `posts`). Usa modelos y base de datos: cuentas con alias/CBU/tarjeta virtual, login en dos pasos, depósitos, retiros, transferencias, pago de servicios, recarga de celular, contactos, solicitudes de dinero, QR para cobrar y resumen de gastos.
+- `posts`: el blog, con CRUD completo de publicaciones. El modelo `Post` tiene título, contenido, autor, fecha de creación, estado (borrador/publicado/archivado) e **imagen opcional**. El listado público (`/notas/`) solo muestra los posts con estado "publicado" (`Post.objects.filter(estado="publicado")`); crear, editar y borrar requieren estar logueado (ver `accounts` abajo).
+- `accounts`: registro, login, logout, cambio de contraseña y perfil (biografía + avatar) para quienes escriben en el blog.
+- `banca`: demo de banca online (agregado extra, fuera de lo que piden los checkpoints de `posts`/`accounts`). Usa modelos y base de datos: cuentas con alias/CBU/tarjeta virtual, login propio en dos pasos, depósitos, retiros, transferencias, pago de servicios, recarga de celular, contactos, solicitudes de dinero, QR para cobrar y resumen de gastos.
+
+## Autenticación, usuarios y perfiles (Preentrega 11)
+
+- **Registro** (`/registro/`): formulario propio (`RegistroForm`, basado en `UserCreationForm`) con usuario, email y contraseña. Al guardar el `User`, la vista crea el `Perfil` explícitamente con `Perfil.objects.create(user=usuario)` — **no se usan signals**, tal como permite la consigna — y loguea a la persona automáticamente.
+- **Login** (`/login/`) y **logout** (`/logout/`, por POST): usan las vistas nativas de Django (`LoginView`/`LogoutView`), con templates propios que mantienen el diseño del sitio.
+- **Modelo `Perfil`** (`accounts/models.py`): `user` (`OneToOneField` a `User`), `biografia` (`TextField`), `link_web` (`URLField`, opcional) y `avatar` (`ImageField`, sube a `avatares/` dentro de `media/`).
+- **Ver perfil** (`/perfil/`, protegida): muestra usuario, nombre, email, biografía y avatar (o un círculo con la inicial si todavía no subiste uno).
+- **Editar perfil** (`/perfil/editar/`, protegida): un formulario para los datos del `User` (nombre, apellido, email) y otro para el `Perfil` (biografía, sitio web, avatar), en la misma página. Usa `Perfil.objects.get_or_create(user=request.user)` por si alguna vez accede un usuario sin perfil todavía (por ejemplo, un superusuario creado por `createsuperuser`). Procesa la imagen con `request.FILES`.
+- **Rutas protegidas**: crear, editar, eliminar y gestionar posts (`/notas/crear/`, `/notas/<slug>/editar/`, `/notas/<slug>/eliminar/`, `/notas/gestionar/`) usan `@login_required(login_url='login')`. El listado (`/notas/`) y el detalle (`/notas/<slug>/`) siguen siendo públicos. Si entrás a una de esas URLs sin sesión iniciada, te redirige a `/login/?next=...` y, después de loguearte, te manda de vuelta a donde querías ir.
+- **Navegación condicional**: el menú muestra "Iniciar sesión"/"Registrarse" si no estás logueado, o "Mi perfil"/"Crear post"/tu nombre de usuario/"Cerrar sesión" si lo estás.
+- **Ojo:** este login (`/login/`) es el del **blog** (para escribir posts). La banca tiene su **propio** login en `/banca/ingresar/`, con verificación en dos pasos — son dos sistemas separados, aunque comparten el mismo modelo `User` de Django por debajo.
 
 ## CRUD de posts (Preentrega 10)
 
@@ -107,7 +123,7 @@ Las operaciones disponibles:
 - Las vistas de crear/editar instancian el formulario con `PostForm(request.POST, request.FILES)` (o `request.FILES, instance=post` al editar), para procesar tanto los campos de texto como el archivo.
 - Si un post no tiene imagen, el template muestra su ícono (emoji) en vez de romper.
 
-**Para probarlo:** entrá a `/notas/crear/`, completá el formulario y subí una imagen (cualquier `.jpg`/`.png`). Guardá como "Publicado" y mirá cómo aparece en `/notas/` y en el detalle del post. Las imágenes quedan en `media/posts/` (esa carpeta no se sube a GitHub, está en `.gitignore`).
+**Para probarlo:** registrate en `/registro/` (o logueate si ya tenés cuenta), entrá a `/notas/crear/`, completá el formulario y subí una imagen (cualquier `.jpg`/`.png`). Guardá como "Publicado" y mirá cómo aparece en `/notas/` y en el detalle del post. Las imágenes quedan en `media/posts/` (esa carpeta no se sube a GitHub, está en `.gitignore`).
 
 ## Estructura del proyecto Django
 
@@ -128,6 +144,14 @@ blog_consola/
 │   │                        detalle_post.html, post_form.html, post_confirm_delete.html,
 │   │                        gestionar_posts.html, ayuda.html, terminos.html, contacto.html)
 │   └── static/posts/css/  (estilos.css)
+├── accounts/               (registro, login, logout y perfil)
+│   ├── models.py           (modelo Perfil)
+│   ├── forms.py            (RegistroForm, PerfilForm, DatosUsuarioForm)
+│   ├── admin.py
+│   ├── urls.py
+│   ├── views.py            (registro, perfil, editar_perfil)
+│   └── templates/accounts/ (login.html, registro.html, perfil.html, editar_perfil.html,
+│                             password_change.html, password_change_done.html)
 └── banca/                 (app de banca online, con modelos y base de datos)
     ├── models.py, forms.py, views.py, urls.py
     ├── templates/banca/
@@ -136,7 +160,7 @@ blog_consola/
 
 ## Páginas y navegación
 
-El sitio tiene un template base (`posts/templates/posts/base.html`) compartido por las dos apps, con el menú de navegación y el pie de página. De ahí heredan todos los templates usando `{% extends %}`.
+El sitio tiene un template base (`posts/templates/posts/base.html`) compartido por las tres apps, con el menú de navegación y el pie de página. De ahí heredan todos los templates usando `{% extends %}`.
 
 ---
 

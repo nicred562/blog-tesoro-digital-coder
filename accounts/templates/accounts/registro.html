@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Registrarse - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto">
+    <h1>Creá tu cuenta en el blog</h1>
+    <p>Con esta cuenta vas a poder escribir, editar y borrar tus propios posts.</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <button type="submit" class="boton">Registrarme</button>
+    </form>
+    <p>¿Ya tenés cuenta? <a href="{% url 'login' %}">Ingresá acá</a>.</p>
+</section>
+{% endblock %}

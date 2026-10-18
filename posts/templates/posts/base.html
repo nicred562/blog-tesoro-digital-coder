@@ -35,7 +35,10 @@
                 <a href="{% url 'acerca' %}">Acerca de</a>
                 <a href="{% url 'banca:seguridad' %}">Seguridad</a>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'banca:perfil' %}" class="avatar-nav" title="Mi perfil">
+                    <span class="nav-saludo">Hola, {{ user.username }}</span>
+                    <a href="{% url 'perfil' %}">Mi perfil</a>
+                    <a href="{% url 'crear_post' %}">Crear post</a>
+                    <a href="{% url 'banca:perfil' %}" class="avatar-nav" title="Mi cuenta bancaria">
                         {% if user.cuenta.foto %}
                             <img src="{{ user.cuenta.foto.url }}" alt="">
                         {% else %}
@@ -43,12 +46,14 @@
                         {% endif %}
                     </a>
                     <a href="{% url 'banca:panel' %}" class="boton-nav">Mi cuenta</a>
-                    <form method="post" action="{% url 'banca:salir' %}" class="form-salir">
+                    <form method="post" action="{% url 'logout' %}" class="form-salir">
                         {% csrf_token %}
-                        <button type="submit" class="enlace-boton">Salir</button>
+                        <button type="submit" class="enlace-boton">Cerrar sesión</button>
                     </form>
                 {% else %}
-                    <a href="{% url 'banca:ingresar' %}">Ingresar</a>
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                    <a href="{% url 'registro' %}">Registrarse</a>
+                    <a href="{% url 'banca:ingresar' %}">Ingresar (banca)</a>
                     <a href="{% url 'banca:registro' %}" class="boton-nav">Abrir cuenta</a>
                 {% endif %}
                 <button type="button" class="boton-tema" onclick="alternarTema()" aria-label="Cambiar entre tema claro y oscuro">

@@ -10,8 +10,12 @@
         <p class="bajada-lista">Guías, novedades y consejos para sacarle provecho a tu cuenta.</p>
     </div>
     <div class="lista-posts-acciones">
-        <a href="{% url 'crear_post' %}" class="boton">+ Nueva nota</a>
-        <a href="{% url 'gestionar_posts' %}" class="boton boton-secundario">Gestionar posts</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'crear_post' %}" class="boton">+ Nueva nota</a>
+            <a href="{% url 'gestionar_posts' %}" class="boton boton-secundario">Gestionar posts</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="boton boton-secundario">Iniciar sesión para escribir</a>
+        {% endif %}
     </div>
 </div>
 

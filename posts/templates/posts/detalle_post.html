@@ -21,9 +21,11 @@
         {{ post.contenido|linebreaks }}
     </div>
 
+    {% if user.is_authenticated %}
     <div class="post-detalle-acciones">
         <a href="{% url 'editar_post' post.slug %}" class="boton boton-secundario">Editar</a>
         <a href="{% url 'eliminar_post' post.slug %}" class="boton-peligro">Eliminar</a>
     </div>
+    {% endif %}
 </article>
 {% endblock %}

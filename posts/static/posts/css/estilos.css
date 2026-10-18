@@ -150,6 +150,30 @@ body {
     object-fit: cover;
 }
 
+.nav-saludo {
+    color: #fff;
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.avatar-perfil-grande {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1rem;
+}
+
+.avatar-perfil-inicial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-acento);
+    color: var(--color-primario);
+    font-size: 2.6rem;
+    font-weight: 800;
+}
+
 .boton-tema {
     background: rgba(255, 255, 255, 0.12);
     border: none;

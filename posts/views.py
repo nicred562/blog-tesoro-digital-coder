@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import PostForm
@@ -39,12 +40,14 @@ def detalle_post(request, slug):
     return render(request, 'posts/detalle_post.html', {'post': post})
 
 
+@login_required(login_url='login')
 def gestionar_posts(request):
     """Listado con TODOS los posts (cualquier estado), para crear/editar/borrar."""
     posts = Post.objects.all()
     return render(request, 'posts/gestionar_posts.html', {'posts': posts})
 
 
+@login_required(login_url='login')
 def crear_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
@@ -58,6 +61,7 @@ def crear_post(request):
     return render(request, 'posts/post_form.html', {'form': form, 'titulo_pagina': 'Nueva nota'})
 
 
+@login_required(login_url='login')
 def editar_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
 
@@ -73,6 +77,7 @@ def editar_post(request, slug):
     return render(request, 'posts/post_form.html', {'form': form, 'post': post, 'titulo_pagina': 'Editar nota'})
 
 
+@login_required(login_url='login')
 def eliminar_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
 

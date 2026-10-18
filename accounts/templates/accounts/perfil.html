@@ -1,0 +1,32 @@
+{% extends 'posts/base.html' %}
+
+{% block titulo %}Mi perfil - Tesoro Digital{% endblock %}
+
+{% block content %}
+<section class="formulario-angosto" style="text-align: center;">
+    {% if perfil.avatar %}
+        <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ user.username }}" class="avatar-perfil-grande">
+    {% else %}
+        <div class="avatar-perfil-grande avatar-perfil-inicial">{{ user.username|first|upper }}</div>
+    {% endif %}
+
+    <h1>{{ user.username }}</h1>
+    {% if user.get_full_name %}<p>{{ user.get_full_name }}</p>{% endif %}
+    {% if user.email %}<p>{{ user.email }}</p>{% endif %}
+
+    <div class="dato-copiable" style="text-align: left;">
+        <span class="dato-etiqueta">Biografía</span>
+    </div>
+    <p>{{ perfil.biografia|default:"Todavía no escribiste nada sobre vos." }}</p>
+
+    {% if perfil.link_web %}
+        <p><a href="{{ perfil.link_web }}" target="_blank" rel="noopener">{{ perfil.link_web }}</a></p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'editar_perfil' %}" class="boton">Editar perfil</a>
+        <a href="{% url 'password_change' %}" class="boton boton-secundario">Cambiar contraseña</a>
+    </p>
+    <p><a href="{% url 'gestionar_posts' %}">Ver mis posts →</a></p>
+</section>
+{% endblock %}

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Aplicaciones propias
     'posts.apps.PostsConfig',
     'banca.apps.BancaConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -127,8 +128,18 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
-# A donde manda Django cuando una vista pide login (@login_required)
+# A donde manda Django cuando una vista pide login (@login_required) sin
+# login_url propio. Las vistas de banca lo usan tal cual; las de posts
+# (crear/editar/eliminar) le pasan login_url='login' para ir al login
+# del blog en vez de al de banca.
 LOGIN_URL = 'banca:ingresar'
+
+# Estas dos las usan las vistas nativas de Django (LoginView/LogoutView)
+# que arma la app accounts. Banca no las usa: tiene su propio login con
+# verificacion en dos pasos y redirige a mano con redirect(), asi que no
+# le afecta cambiar esto aca.
+LOGIN_REDIRECT_URL = 'lista_posts'
+LOGOUT_REDIRECT_URL = 'lista_posts'
 
 
 # Email: por ahora solo se imprime en la terminal, no manda nada real
