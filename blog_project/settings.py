@@ -123,8 +123,8 @@ USE_THOUSAND_SEPARATOR = True
 
 STATIC_URL = 'static/'
 
-# Archivos que suben los usuarios (fotos de perfil, por ahora)
-MEDIA_URL = 'media/'
+# Archivos que suben los usuarios (fotos de perfil, avatares, imagenes de posts)
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
