@@ -162,6 +162,16 @@ blog_consola/
 
 El sitio tiene un template base (`posts/templates/posts/base.html`) compartido por las tres apps, con el menú de navegación y el pie de página. De ahí heredan todos los templates usando `{% extends %}`.
 
+## Tests automatizados
+
+Cada app (`posts`, `accounts`, `banca`) tiene su `tests.py` con tests reales (`django.test.TestCase`), no scripts sueltos. Para correrlos todos:
+
+```bash
+python manage.py test
+```
+
+Usan una base de datos de prueba separada (se crea y se borra sola en cada corrida, no toca `db.sqlite3`) y los que suben imágenes usan un `MEDIA_ROOT` temporal, así que tampoco ensucian la carpeta `media/` real. Cubren, entre otras cosas: que el slug de un post se genere solo, que un borrador no sea visible por URL directa, que crear/editar/borrar posts sin estar logueado redirija al login, que el registro cree el `Perfil` sin signals, y varios de los flujos de la banca (transferencias, dólares, préstamos, plazo fijo, seguros).
+
 ---
 
 # Blog por Consola (Tesoro Digital)
