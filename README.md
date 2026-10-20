@@ -1,6 +1,23 @@
 # Blog Django - Tesoro Digital
 
-Proyecto base del blog web de **Tesoro Digital**, un banco digital. El blog va a publicar contenido para clientes: guías de uso de la app, ahorro, tarjetas, transferencias, seguridad y novedades. Este repositorio también conserva el blog por consola que se construyó en los módulos anteriores (ver más abajo).
+Blog web hecho con Django para **Tesoro Digital**, un banco digital ficticio: guías de uso de la app, ahorro, tarjetas, transferencias, seguridad y novedades, con autores registrados que publican sus propias notas. Este repositorio también conserva el blog por consola que se construyó en los módulos anteriores del curso (ver más abajo).
+
+## Tecnologías
+
+- Python 3
+- Django 6.1
+- SQLite (base de datos)
+- Pillow (manejo de imágenes)
+- python-decouple (variables de entorno)
+- HTML / CSS (sin frameworks de frontend)
+
+## Funcionalidades principales
+
+- **Blog**: listar, ver, crear, editar y eliminar posts (CRUD completo) desde la propia interfaz web, con imagen opcional por post.
+- **Usuarios**: registro, login, logout, perfil con biografía y avatar.
+- **Rutas protegidas**: crear/editar/eliminar posts y editar el perfil requieren sesión iniciada (`@login_required` en las vistas, no solo ocultar el botón).
+- **Panel de administración** de Django para gestionar posts y perfiles.
+- **Extra (`banca`)**: una demo de banco online aparte (cuentas, transferencias, tarjeta virtual, dólares, préstamos, etc. — no forma parte de lo que pide el checkpoint de `posts`/`accounts`, ver más abajo).
 
 ## Descripción
 
@@ -49,6 +66,14 @@ Instalar las dependencias:
 ```bash
 pip install -r requirements.txt
 ```
+
+Variables de entorno (opcional): el proyecto funciona sin hacer nada acá, con valores por defecto para desarrollo. Si querés definir los tuyos, copiá el archivo de ejemplo y editalo:
+
+```bash
+cp .env.example .env
+```
+
+`.env` no se sube al repositorio (está en `.gitignore`); `.env.example` sí, como guía de qué variables existen (`SECRET_KEY`, `DEBUG`), sin valores reales.
 
 Crear la base de datos:
 
@@ -171,6 +196,11 @@ python manage.py test
 ```
 
 Usan una base de datos de prueba separada (se crea y se borra sola en cada corrida, no toca `db.sqlite3`) y los que suben imágenes usan un `MEDIA_ROOT` temporal, así que tampoco ensucian la carpeta `media/` real. Cubren, entre otras cosas: que el slug de un post se genere solo, que un borrador no sea visible por URL directa, que crear/editar/borrar posts sin estar logueado redirija al login, que el registro cree el `Perfil` sin signals, y varios de los flujos de la banca (transferencias, dólares, préstamos, plazo fijo, seguros).
+
+## Autor
+
+**Nicolás Obregón** — proyecto hecho para la carrera de Python/Django de Coderhouse.
+[github.com/nicred562](https://github.com/nicred562)
 
 ---
 
