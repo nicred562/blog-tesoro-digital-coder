@@ -1,9 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import PostForm
 from .models import Post
+
+POSTS_POR_PAGINA = 6
 
 
 def inicio(request):
@@ -28,9 +32,18 @@ def contacto(request):
 
 
 def lista_posts(request):
+    busqueda = request.GET.get("q", "").strip()
     posts = Post.objects.filter(estado="publicado").order_by("-fecha_creacion")
+
+    if busqueda:
+        posts = posts.filter(Q(titulo__icontains=busqueda) | Q(contenido__icontains=busqueda))
+
+    paginador = Paginator(posts, POSTS_POR_PAGINA)
+    pagina = paginador.get_page(request.GET.get("page"))
+
     context = {
-        "posts": posts
+        "posts": pagina,
+        "busqueda": busqueda,
     }
     return render(request, "posts/lista_posts.html", context)
 
@@ -56,7 +69,8 @@ def crear_post(request):
             messages.success(request, f"Post '{post.titulo}' creado.")
             return redirect('gestionar_posts')
     else:
-        form = PostForm()
+        nombre_autor = request.user.get_full_name() or request.user.username
+        form = PostForm(initial={'autor': nombre_autor})
 
     return render(request, 'posts/post_form.html', {'form': form, 'titulo_pagina': 'Nueva nota'})
 

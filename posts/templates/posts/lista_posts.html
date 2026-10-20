@@ -19,6 +19,16 @@
     </div>
 </div>
 
+<form method="get" class="form-busqueda">
+    <input type="text" name="q" value="{{ busqueda }}" placeholder="Buscar por título o contenido...">
+    <button type="submit" class="boton boton-secundario">Buscar</button>
+    {% if busqueda %}<a href="{% url 'lista_posts' %}" class="enlace-limpiar">Limpiar</a>{% endif %}
+</form>
+
+{% if busqueda and not posts %}
+    <p>No encontramos ninguna nota que coincida con "{{ busqueda }}".</p>
+{% endif %}
+
 <div class="grilla-posts">
     {% for post in posts %}
     <a href="{% url 'detalle_post' post.slug %}" class="tarjeta-post">
@@ -35,7 +45,21 @@
         </div>
     </a>
     {% empty %}
+    {% if not busqueda %}
     <p>Todavía no hay notas publicadas. ¡Cargá la primera desde el panel de administración!</p>
+    {% endif %}
     {% endfor %}
 </div>
+
+{% if posts.has_other_pages %}
+<div class="paginacion">
+    {% if posts.has_previous %}
+        <a href="?page={{ posts.previous_page_number }}{% if busqueda %}&q={{ busqueda }}{% endif %}">← Anterior</a>
+    {% endif %}
+    <span>Página {{ posts.number }} de {{ posts.paginator.num_pages }}</span>
+    {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}{% if busqueda %}&q={{ busqueda }}{% endif %}">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}

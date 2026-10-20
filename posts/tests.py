@@ -58,6 +58,23 @@ class ListaYDetalleTests(TestCase):
         self.assertContains(response, self.publicado.titulo)
         self.assertNotContains(response, self.borrador.titulo)
 
+    def test_buscar_por_titulo_encuentra_el_post(self):
+        response = self.client.get(reverse("lista_posts"), {"q": "publicada"})
+        self.assertContains(response, self.publicado.titulo)
+
+    def test_buscar_por_contenido_tambien_encuentra_el_post(self):
+        response = self.client.get(reverse("lista_posts"), {"q": "Contenido de la nota publicada"})
+        self.assertContains(response, self.publicado.titulo)
+
+    def test_buscar_un_termino_sin_coincidencias_avisa_y_no_rompe(self):
+        response = self.client.get(reverse("lista_posts"), {"q": "esto no existe en ningun post"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No encontramos ninguna nota")
+
+    def test_la_busqueda_no_muestra_borradores(self):
+        response = self.client.get(reverse("lista_posts"), {"q": "borrador"})
+        self.assertNotContains(response, self.borrador.titulo)
+
     def test_el_detalle_de_un_post_publicado_carga(self):
         response = self.client.get(reverse("detalle_post", args=[self.publicado.slug]))
         self.assertEqual(response.status_code, 200)
@@ -166,3 +183,33 @@ class CrudProtegidoTests(TestCase):
         post.refresh_from_db()
         self.assertEqual(post.imagen.name, nombre_original)
         self.assertEqual(post.contenido, "contenido editado")
+
+    def test_el_formulario_de_creacion_precarga_el_autor_con_el_usuario_logueado(self):
+        self.client.login(username="autor", password="ContraseñaSegura123")
+        response = self.client.get(reverse("crear_post"))
+        self.assertContains(response, 'value="autor"')
+
+
+class PaginacionTests(TestCase):
+    def setUp(self):
+        for numero in range(1, 9):
+            Post.objects.create(
+                titulo=f"Post numero {numero}",
+                contenido="contenido",
+                autor="Nico",
+                estado=Post.Estado.PUBLICADO,
+            )
+
+    def test_la_primera_pagina_muestra_6_posts(self):
+        response = self.client.get(reverse("lista_posts"))
+        self.assertEqual(len(response.context["posts"]), 6)
+
+    def test_hay_una_segunda_pagina_con_el_resto(self):
+        response = self.client.get(reverse("lista_posts"), {"page": 2})
+        self.assertEqual(len(response.context["posts"]), 2)
+
+    def test_la_paginacion_solo_se_muestra_si_hace_falta(self):
+        Post.objects.all().delete()
+        Post.objects.create(titulo="Unico post", contenido="...", autor="Nico", estado=Post.Estado.PUBLICADO)
+        response = self.client.get(reverse("lista_posts"))
+        self.assertNotContains(response, "paginacion")
